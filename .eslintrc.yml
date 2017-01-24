@@ -1,0 +1,41 @@
+env:
+  browser: false
+  commonjs: true
+  es6: true
+  node: true
+extends: 'eslint:recommended'
+
+parserOptions:
+  ecmaVersion: "6"
+  sourceType: "module"
+
+rules:
+  indent:
+    - error
+    - 2
+    - SwitchCase: 1
+  linebreak-style:
+    - error
+    - unix
+  quotes:
+    - error
+    - single
+  semi:
+    - error
+    - always
+  no-console:
+    - 0
+
+globals:
+  # Testing
+  suite: true
+  test: true
+  describe: true
+  it: true
+  setup: true
+  before: true
+  beforeEach: true
+  after: true
+  afterEach: true
+  teardown: true
+  assert: true

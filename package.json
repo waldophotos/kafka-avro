@@ -1,0 +1,37 @@
+{
+  "name": "@waldo/awesome-lib",
+  "version": "0.0.0",
+  "main": "./lib/boot",
+  "description": "Awesome lib description",
+  "homepage": "https://github.com/waldo/waldo-node-awesome-lib",
+  "bugs": "https://github.com/waldo/waldo-node-awesome-lib/issues",
+  "author": {
+    "name": "Awesome author",
+    "email": "awesome-email@gmail.com"
+  },
+  "contributors": [
+    ""
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/waldo/waldo-node-awesome-lib"
+  },
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=6.x"
+  },
+  "scripts": {
+    "test": "mocha -b test/spec && eslint lib/**"
+  },
+  "dependencies": {
+    "bluebird": "^3.4.6"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^3.12.2",
+    "grunt": "^1.0.1",
+    "grunt-release": "^0.14.0",
+    "mocha": "^3.2.0",
+    "sinon": "^1.17.6"
+  }
+}

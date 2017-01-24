@@ -1,0 +1,3 @@
+--timeout 60000
+-u bdd
+-R spec

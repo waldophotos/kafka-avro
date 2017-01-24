@@ -1,13 +1,13 @@
-# Awesome Lib name
+# kafka-avro
 
-> The awesome lib description
+> Node.js bindings for librdkafka with Avro schema serialization.
 
 ## Install
 
 Install the module using NPM:
 
 ```
-npm install @waldo/awesome-lib --save
+npm install kafka-avro --save
 ```
 
 ## Documentation

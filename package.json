@@ -1,24 +1,24 @@
 {
-  "name": "@waldo/awesome-lib",
+  "name": "kafka-avro",
   "version": "0.0.0",
-  "main": "./lib/boot",
-  "description": "Awesome lib description",
-  "homepage": "https://github.com/waldo/waldo-node-awesome-lib",
-  "bugs": "https://github.com/waldo/waldo-node-awesome-lib/issues",
+  "main": "./lib/kafka-avro",
+  "description": "Node.js bindings for librdkafka with Avro schema serialization.",
+  "homepage": "https://github.com/waldo/kafka-avro",
+  "bugs": "https://github.com/waldo/kafka-avro/issues",
   "author": {
-    "name": "Awesome author",
-    "email": "awesome-email@gmail.com"
+    "name": "Thanasis Polychronakis",
+    "email": "thanpolas@gmail.com"
   },
   "contributors": [
     ""
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/waldo/waldo-node-awesome-lib"
+    "url": "https://github.com/waldo/kafka-avro"
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "engines": {
-    "node": ">=6.x"
+    "node": ">=0.12"
   },
   "scripts": {
     "test": "mocha -b test/spec && eslint lib/**"

@@ -39,7 +39,10 @@ tester.init = function() {
           type: 'long',
         },
       },
-    });
+    })
+      .catch(function(err) {
+        console.error('Axios SR creation failed:', err);
+      });
   });
 
   // # Register a new version of a schema under the subject "Kafka-value"

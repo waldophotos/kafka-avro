@@ -129,7 +129,7 @@ Same deal here, thin wrapper around node-rdkafka and deserialize incoming messag
 
 ## Release History
 
-- **v0.0.1**, *TBD*
+- **v0.0.1**, *25 Jan 2016*
     - Big Bang
 
 ## License

@@ -2,6 +2,8 @@
 
 > Node.js bindings for librdkafka with Avro schema serialization.
 
+**WARNING** Still WIP, consumer not working!
+
 ## Install
 
 Install the module using NPM:

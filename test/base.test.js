@@ -4,13 +4,10 @@
 const chai = require('chai');
 const expect = chai.expect;
 
-const awesomeLib = require('../..');
+const KafkaAvro = require('../..');
 
 describe('Base API Surface', function() {
   it('should expose expected methods', function(){
-    expect(awesomeLib).to.have.keys([
-      'awesome',
-      'method',
-    ]);
+    expect(KafkaAvro).to.be.a('function');
   });
 });

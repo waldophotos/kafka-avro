@@ -40,7 +40,7 @@ kafkaAvro.init()
 > NOTICE: You need to initialize kafka-avro before you can produce or consume messages.
 
 ```js
-var producer = new kafkaAvro.Producer({
+var producer = kafkaAvro.getProducer({
   // Options listed bellow
 });
 
@@ -60,7 +60,7 @@ producer.on('ready', function() {
 
   // if partition is set to -1, librdkafka will use the default partitioner
   var partition = -1;
-  producer.produce(topic, partition, value, key);
+  producer.produce(topicName, topic, partition, value, key);
 });
 
 producer.on('disconnected', function(arg) {
@@ -81,7 +81,7 @@ What kafka-avro basically does is wrap around node-rdkafka and intercept the pro
 ```js
 var Transform = require('stream').Transform;
 
-var consumer = new kafkaAvro.Consumer({
+var consumer = kafkaAvro.getConsumer({
   'group.id': 'librd-test',
   'socket.keepalive.enable': true,
   'enable.auto.commit': true,

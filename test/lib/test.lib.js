@@ -3,11 +3,17 @@
  */
 var axios = require('axios');
 
-var tester = module.exports = {};
+var schemaFix = require('../fixtures/schema.fix');
 
-tester.KAFKA_SCHEMA_REGISTRY_URL = 'http://schema-registry-confluent.internal.dev.waldo.photos';
-tester.KAFKA_BROKER_URL = 'http://rest-proxy-confluent.internal.dev.waldo.photos';
-tester.topic = 'test-node-kafka-avro';
+var testLib = module.exports = {};
+
+testLib.KAFKA_SCHEMA_REGISTRY_URL = 'http://schema-registry-confluent.internal.dev.waldo.photos';
+testLib.KAFKA_BROKER_URL = 'broker-1.service.consul:9092,broker-3.service.consul:9092,broker-2.service.consul:9092';
+testLib.topic = schemaFix.name;
+
+// curl -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" \
+//     --data '{"schema": "{\"name\": \"string\", \"long\": \"long\"}"}' \
+//      http://schema-registry-confluent.internal.dev.waldo.photos/subjects/test-thanpolas-Kafka/versions
 
 var testBoot = false;
 
@@ -15,33 +21,31 @@ var testBoot = false;
  * Require from all test scripts, prepares kafka for testing.
  *
  */
-tester.init = function() {
+testLib.init = function() {
   if (testBoot) {
     return;
   }
   testBoot = true;
 
   beforeEach(function() {
-    var schemaCreateUrl = tester.KAFKA_SCHEMA_REGISTRY_URL +
-      '/subjects/' + tester.topic + '-value/versions';
+    var schemaCreateUrl = testLib.KAFKA_SCHEMA_REGISTRY_URL +
+      '/subjects/' + testLib.topic + '-value/versions';
 
+    var data = {
+      schema: JSON.stringify(schemaFix),
+    };
+    console.log('DATA:', data);
     return axios({
       url: schemaCreateUrl,
       method: 'post',
       headers: {
         'Content-Type': 'application/vnd.schemaregistry.v1+json',
       },
-      data: {
-        name: {
-          type: 'string',
-        },
-        long: {
-          type: 'long',
-        },
-      },
+      data: data,
     })
       .catch(function(err) {
         console.error('Axios SR creation failed:', err);
+        throw err;
       });
   });
 
@@ -53,7 +57,7 @@ tester.init = function() {
 };
 
 /** @type {Object} simple logger */
-tester.log = {
+testLib.log = {
   info: function() {
     let args = Array.prototype.splice.call(arguments, 0);
     console.log('INFO:', args.join(' '));
@@ -70,7 +74,7 @@ tester.log = {
  * @param {number} seconds cooldown in seconds.
  * @return {Function} use is beforeEach().
  */
-tester.cooldown = function(seconds) {
+testLib.cooldown = function(seconds) {
   return function(done) {
     setTimeout(done, seconds);
   };

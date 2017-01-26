@@ -1,12 +1,12 @@
 env:
   browser: false
   commonjs: true
-  es6: true
+  es6: false
   node: true
 extends: 'eslint:recommended'
 
 parserOptions:
-  ecmaVersion: "6"
+  ecmaVersion: "5"
   sourceType: "module"
 
 rules:

@@ -60,6 +60,11 @@ describe('Consume', function() {
           // Make the Kafka broker acknowledge our message (optional)
           'request.required.acks': 1,
         });
+        this.producerTopicTwo = producer.Topic(testLib.topicTwo, {
+          // Make the Kafka broker acknowledge our message (optional)
+          'request.required.acks': 1,
+        });
+
       });
   });
 
@@ -107,6 +112,61 @@ describe('Consume', function() {
         }
       }.bind(this), 1000);
     });
+
+    it('should produce and consume on two topics using a single consumer', function(done) {
+      var produceTime = 0;
+
+      var message = {
+        name: 'Thanasis',
+        long: 540,
+      };
+
+      // //start consuming messages
+      this.consumer.consume([
+        testLib.topic,
+        testLib.topicTwo,
+      ]);
+
+      var receivedOne = false;
+      var receivedTwo = false;
+
+      this.consumer.on('data', function(rawData) {
+        console.log('GOT:', rawData);
+        if (rawData.topic === testLib.topic) {
+          receivedOne = true;
+        } else {
+          receivedTwo = true;
+        }
+
+        var data = rawData.parsed;
+        var diff = Date.now() - produceTime;
+        console.log('Produce to consume time in ms:', diff);
+        expect(data).to.have.keys([
+          'name',
+          'long',
+        ]);
+        expect(data.name).to.equal(message.name);
+        expect(data.long).to.equal(message.long);
+
+        if (receivedOne && receivedTwo) {
+          done();
+        }
+      }.bind(this));
+
+      produceTime = Date.now();
+      this.producer.produce(this.producerTopicTwo, -1, message, 'key');
+      this.producer.produce(this.producerTopic, -1, message, 'key');
+
+      //need to keep polling for a while to ensure the delivery reports are received
+      var pollLoop = setInterval(function () {
+        this.producer.poll();
+        if (this.gotReceipt) {
+          clearInterval(pollLoop);
+          this.producer.disconnect();
+        }
+      }.bind(this), 1000);
+    });
+
   });
 
   describe('Consume using Streams', function() {

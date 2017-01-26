@@ -63,86 +63,91 @@ describe('Consume', function() {
       });
   });
 
-  afterEach(function(done) {
-    this.consumer.disconnect(function() {
-      done();
+  describe('Consumer direct "on"', function() {
+    afterEach(function(done) {
+      this.consumer.disconnect(function() {
+        done();
+      });
+    });
+
+    it('should produce and consume a message using consume "on"', function(done) {
+      var produceTime = 0;
+
+      var message = {
+        name: 'Thanasis',
+        long: 540,
+      };
+
+      // //start consuming messages
+      this.consumer.consume([testLib.topic]);
+
+      this.consumer.on('data', function(rawData) {
+        var data = rawData.parsed;
+        var diff = Date.now() - produceTime;
+        console.log('Produce to consume time in ms:', diff);
+        expect(data).to.have.keys([
+          'name',
+          'long',
+        ]);
+        expect(data.name).to.equal(message.name);
+        expect(data.long).to.equal(message.long);
+
+        done();
+      }.bind(this));
+
+      produceTime = Date.now();
+      this.producer.produce(this.producerTopic, -1, message, 'key');
+
+      //need to keep polling for a while to ensure the delivery reports are received
+      var pollLoop = setInterval(function () {
+        this.producer.poll();
+        if (this.gotReceipt) {
+          clearInterval(pollLoop);
+          this.producer.disconnect();
+        }
+      }.bind(this), 1000);
     });
   });
 
-  it('should produce and consume a message', function(done) {
-    var produceTime = 0;
+  describe('Consume using Streams', function() {
+    it('should produce and consume a message using streams', function(done) {
+      var produceTime = 0;
 
-    var message = {
-      name: 'Thanasis',
-      long: 540,
-    };
+      var message = {
+        name: 'Thanasis',
+        long: 540,
+      };
 
-    // //start consuming messages
-    this.consumer.consume([testLib.topic]);
+      var stream = this.consumer.getReadStream(testLib.topic, {
+        waitInterval: 0
+      });
 
-    this.consumer.on('data', function(rawData) {
-      var data = rawData.parsed;
-      var diff = Date.now() - produceTime;
-      console.log('Produce to consume time in ms:', diff);
-      expect(data).to.have.keys([
-        'name',
-        'long',
-      ]);
-      expect(data.name).to.equal(message.name);
-      expect(data.long).to.equal(message.long);
+      stream.on('data', function(dataRaw) {
+        var data = dataRaw.parsed;
+        var diff = Date.now() - produceTime;
+        console.log('Produce to consume time in ms:', diff);
+        expect(data).to.have.keys([
+          'name',
+          'long',
+        ]);
 
-      done();
-    }.bind(this));
+        expect(data.name).to.equal(message.name);
+        expect(data.long).to.equal(message.long);
 
-    produceTime = Date.now();
-    this.producer.produce(this.producerTopic, -1, message, 'key');
+        done();
+      }.bind(this));
 
-    //need to keep polling for a while to ensure the delivery reports are received
-    var pollLoop = setInterval(function () {
-      this.producer.poll();
-      if (this.gotReceipt) {
-        clearInterval(pollLoop);
-        this.producer.disconnect();
-      }
-    }.bind(this), 1000);
-  });
+      produceTime = Date.now();
+      this.producer.produce(this.producerTopic, -1, message, 'key');
 
-  it('should produce and consume a message using streams', function(done) {
-    var produceTime = 0;
-
-    var message = {
-      name: 'Thanasis',
-      long: 540,
-    };
-
-    var stream = this.consumer.getReadStream(testLib.topic, {
-      waitInterval: 0
+      //need to keep polling for a while to ensure the delivery reports are received
+      var pollLoop = setInterval(function () {
+        this.producer.poll();
+        if (this.gotReceipt) {
+          clearInterval(pollLoop);
+          this.producer.disconnect();
+        }
+      }.bind(this), 1000);
     });
-
-    stream.on('data', function(data) {
-      var diff = Date.now() - produceTime;
-      console.log('Produce to consume time in ms:', diff);
-      expect(data).to.have.keys([
-        'name',
-        'long',
-      ]);
-
-      expect(data.name).to.equal(message.name);
-      expect(data.long).to.equal(message.long);
-
-      done();
-    }.bind(this));
-
-    produceTime = Date.now();
-    this.producer.produce(this.producerTopic, -1, message, 'key');
-
-    //need to keep polling for a while to ensure the delivery reports are received
-    var pollLoop = setInterval(function () {
-      this.producer.poll();
-      if (this.gotReceipt) {
-        clearInterval(pollLoop);
-        this.producer.disconnect();
-      }
-    }.bind(this), 1000);
   });
 });

@@ -7,6 +7,7 @@ var expect = chai.expect;
 var KafkaAvro = require('../..');
 var testLib = require('../lib/test.lib');
 
+
 describe('Produce', function() {
   testLib.init();
 
@@ -20,21 +21,10 @@ describe('Produce', function() {
   });
 
   beforeEach(function() {
-    return this.kafkaAvro.getConsumer({
-      'group.id': 'kafka-avro-test',
-      'socket.keepalive.enable': true,
-      'enable.auto.commit': true,
-    })
-      .then((consumer) => {
-        this.consumer = consumer;
-      });
-  });
-
-  beforeEach(function() {
     return this.kafkaAvro.getProducer({
       'dr_cb': true,
     })
-      .then((producer) => {
+      .then(function (producer) {
         this.producer = producer;
 
         producer.on('event.log', function(log) {
@@ -46,66 +36,56 @@ describe('Produce', function() {
           console.error('Error from producer:', err);
         });
 
-        producer.on('delivery-report', function(report) {
-          console.log('delivery-report:' + JSON.stringify(report));
+        producer.on('delivery-report', function() {
           this.gotReceipt = true;
-        });
+        }.bind(this));
 
         this.producerTopic = producer.Topic(testLib.topic, {
           // Make the Kafka broker acknowledge our message (optional)
           'request.required.acks': 1,
         });
-      });
+      }.bind(this));
+  });
+  afterEach(function(done) {
+    this.producer.disconnect(function(err) {
+      done(err);
+    });
   });
 
-  it.only('should produce and consume a message', function(done) {
-    console.log('test start');
+  it('should produce a message', function(done) {
     var message = {
       name: 'Thanasis',
       long: 540,
     };
-
-    var stream = this.consumer.getReadStream(testLib.topic, {
-      waitInterval: 0
-    });
-    console.log('stream:', typeof stream.pipe);
-
-    stream.on('error', function(err) {
-      console.error('FATAL Stream error:', err);
-      done(err);
-    });
-
-    this.consumer.on('error', function(err) {
-      console.error('Consumer Error:', err);
-    });
-
-    // stream
-    //   .pipe((data) => {
-    //     console.log('GOT:', data);
-    //     expect(data).to.deep.equal(message);
-    //     this.consumer.disconnect();
-    //     done();
-    //   });
-
-    stream.on('data', (data) => {
-      console.log('GOT:', data);
-      expect(data).to.deep.equal(message);
-      this.consumer.disconnect();
-      done();
-    });
-
-    console.log('producing...');
-    // Produce message
-    this.producer.produce(testLib.topic, this.producerTopic, -1, message, 'key');
+    this.producer.produce(this.producerTopic, -1, message, 'key');
 
     //need to keep polling for a while to ensure the delivery reports are received
     var pollLoop = setInterval(() => {
       this.producer.poll();
       if (this.gotReceipt) {
         clearInterval(pollLoop);
-        this.producer.disconnect();
+        done();
       }
     }, 1000);
-
   });
+  it('should not allow invalid type', function() {
+    var message = {
+      name: 'Thanasis',
+      long: '540',
+    };
+
+    var binded = this.producer.produce.bind(this.producer, this.producerTopic, -1, message, 'key');
+
+    expect(binded).to.throw(Error);
+  });
+  it('should not allow less attributes', function() {
+    var message = {
+      name: 'Thanasis',
+    };
+
+    var binded = this.producer.produce.bind(this.producer, this.producerTopic, -1, message, 'key');
+
+    expect(binded).to.throw(Error);
+  });
+
 });

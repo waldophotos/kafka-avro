@@ -47,35 +47,31 @@ kafkaAvro.init()
 > NOTICE: You need to initialize kafka-avro before you can produce or consume messages.
 
 ```js
-var producer = kafkaAvro.getProducer({
+kafkaAvro.getProducer({
   // Options listed bellow
-});
+})
+    // "getProducer()" returns a Bluebird Promise.
+    .then(function(producer) {
+        var topicName = 'test';
 
-var topicName = 'test';
+        producer.on('disconnected', function(arg) {
+          console.log('producer disconnected. ' + JSON.stringify(arg));
+        });
 
-//Wait for the ready event before producing
-producer.on('ready', function() {
-  //Create a Topic object with any options our Producer
-  //should use when producing to that topic.
-  var topic = producer.Topic(topicName, {
-    // Make the Kafka broker acknowledge our message (optional)
-    'request.required.acks': 1
-  });
+        //Create a Topic object with any options our Producer
+        //should use when producing to that topic.
+        var topic = producer.Topic(topicName, {
+        // Make the Kafka broker acknowledge our message (optional)
+        'request.required.acks': 1
+        });
 
-  var value = new Buffer('value-' +i);
-  var key = 'key';
+        var value = new Buffer('value-' +i);
+        var key = 'key';
 
-  // if partition is set to -1, librdkafka will use the default partitioner
-  var partition = -1;
-  producer.produce(topic, partition, value, key);
-});
-
-producer.on('disconnected', function(arg) {
-  console.log('producer disconnected. ' + JSON.stringify(arg));
-});
-
-//starting the producer
-producer.connect();
+        // if partition is set to -1, librdkafka will use the default partitioner
+        var partition = -1;
+        producer.produce(topic, partition, value, key);
+    })
 ```
 
 What kafka-avro basically does is wrap around node-rdkafka and intercept the produce method to validate and serialize the message.
@@ -88,32 +84,32 @@ What kafka-avro basically does is wrap around node-rdkafka and intercept the pro
 > NOTICE: You need to initialize kafka-avro before you can produce or consume messages.
 
 ```js
-var Transform = require('stream').Transform;
-
-var consumer = kafkaAvro.getConsumer({
+kafkaAvro.getConsumer({
   'group.id': 'librd-test',
   'socket.keepalive.enable': true,
   'enable.auto.commit': true,
-});
+})
+    // the "getConsumer()" method will return a bluebird promise.
+    .then(function(consumer) {
+        var topicName = 'test';
 
-var topicName = 'test';
+        var stream = consumer.getReadStream(topicName, {
+          waitInterval: 0
+        });
 
-var stream = consumer.getReadStream(topicName, {
-  waitInterval: 0
-});
+        stream.on('error', function() {
+          process.exit(1);
+        });
 
-stream.on('error', function() {
-  process.exit(1);
-});
+        consumer.on('error', function(err) {
+          console.log(err);
+          process.exit(1);
+        });
 
-consumer.on('error', function(err) {
-  console.log(err);
-  process.exit(1);
-});
-
-stream.on('data', function(message) {
-    console.log('Received message:', message);
-});
+        stream.on('data', function(message) {
+            console.log('Received message:', message);
+        });
+    });
 ```
 
 Same deal here, thin wrapper around node-rdkafka and deserialize incoming messages before they reach your consuming method.

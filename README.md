@@ -34,10 +34,6 @@ var kafkaAvro = new KafkaAvro({
     schemaRegistry: 'localhost:8081',
 });
 
-kafkaAvro.on('log', function(message) {
-    console.log(message);
-})
-
 // Query the Schema Registry for all topic-schema's
 // fetch them and evaluate them.
 kafkaAvro.init()

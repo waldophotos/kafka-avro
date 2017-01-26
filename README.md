@@ -2,7 +2,7 @@
 
 > Node.js bindings for librdkafka with Avro schema serialization.
 
-**WARNING** Still WIP, consumer not working!
+The kafka-avro library is a wrapper that combines the [node-rdkafka][node-rdkafka] and [avsc](avsc) libraries to allow for Production and Consumption of messages on kafka validated and serialized by Avro.
 
 ## Install
 
@@ -14,9 +14,18 @@ npm install kafka-avro --save
 
 ## Documentation
 
+The kafka-avro library operates in the following steps:
+
+1. You provide your Kafka Brokers and Schema Registry (SR) Url to a new instance of kafka-avro.
+1. You initialize kafka-avro, that will tell the library to query the SR for all registered schemas, evaluate and store them in runtime memory.
+1. kafka-avro will then expose the `getConsumer()` and `getProducer()` methods, which both return instsances of the corresponding Constructors from the [node-rdkafka][node-rdkafka] library.
+
+The instances of "node-rdkafka" that are returned by kafka-avro are hacked so as to intercept produced and consumed messages and run them by the Avro de/serializer.
+
+You are highly encouraged to read the ["node-rdkafka" documentation](https://blizzard.github.io/node-rdkafka/current/) on the way you can use the Producer and Consumer instances as well as check out the [available configuration options of node-rdkafka](https://github.com/edenhill/librdkafka/blob/2213fb29f98a7a73f22da21ef85e0783f6fd67c4/CONFIGURATION.md)
+
 ### Initialize kafka-avro
 
-Initialize kafka-avro
 ```js
 var KafkaAvro = require('kafka-avro');
 
@@ -62,7 +71,7 @@ producer.on('ready', function() {
 
   // if partition is set to -1, librdkafka will use the default partitioner
   var partition = -1;
-  producer.produce(topicName, topic, partition, value, key);
+  producer.produce(topic, partition, value, key);
 });
 
 producer.on('disconnected', function(arg) {
@@ -79,6 +88,8 @@ What kafka-avro basically does is wrap around node-rdkafka and intercept the pro
 * [Full list of Producer's options](https://github.com/edenhill/librdkafka/blob/2213fb29f98a7a73f22da21ef85e0783f6fd67c4/CONFIGURATION.md)
 
 ### Quick Usage Consumer
+
+> NOTICE: You need to initialize kafka-avro before you can produce or consume messages.
 
 ```js
 var Transform = require('stream').Transform;
@@ -99,18 +110,13 @@ stream.on('error', function() {
   process.exit(1);
 });
 
-stream
-  .pipe(new Transform({
-    objectMode: true,
-    transform: function(data, encoding, callback) {
-      // do your async stuff, then:
-      callback(null, data.message);
-    }
-  }))
-  .pipe(process.stdout);
-
 consumer.on('error', function(err) {
   console.log(err);
+  process.exit(1);
+});
+
+stream.on('data', function(message) {
+    console.log('Received message:', message);
 });
 ```
 
@@ -118,6 +124,18 @@ Same deal here, thin wrapper around node-rdkafka and deserialize incoming messag
 
 * [node-rdkafka Consumer Tutorial](https://blizzard.github.io/node-rdkafka/current/tutorial-consumer.html)
 * [Full list of Consumer's options](https://github.com/edenhill/librdkafka/blob/2213fb29f98a7a73f22da21ef85e0783f6fd67c4/CONFIGURATION.md)
+
+#### Consumer Data Object
+
+kafka-avro intercepts all incoming messages and augments the object with one more property named `parsed` which contained the avro deserialized object. Here is a breakdown of the properties included in the `message` object you receive when consuming messages:
+
+* `value` **Buffer** The raw message buffer from Kafka.
+* `size` **Number** The size of the message.
+* `key` **String|Number** Partioning key used.
+* `topic` **String** The topic this message comes from.
+* `offset` **Number** The Kafka offset.
+* `partition` **Number** The kafka partion used.
+* `parsed` **Object** The avro deserialized message as a JS Object ltieral.
 
 ## Releasing
 
@@ -135,3 +153,6 @@ Same deal here, thin wrapper around node-rdkafka and deserialize incoming messag
 ## License
 
 Copyright Waldo, Inc. All rights reserved.
+
+[avsc]: https://github.com/mtth/avsc
+[node-rdkafka]: https://github.com/Blizzard/node-rdkafka

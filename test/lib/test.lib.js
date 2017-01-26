@@ -7,9 +7,14 @@ var schemaFix = require('../fixtures/schema.fix');
 
 var testLib = module.exports = {};
 
-testLib.KAFKA_SCHEMA_REGISTRY_URL = 'http://schema-registry-confluent.internal.dev.waldo.photos';
-testLib.KAFKA_BROKER_URL = 'broker-1.service.consul:9092,broker-3.service.consul:9092,broker-2.service.consul:9092';
+// testLib.KAFKA_SCHEMA_REGISTRY_URL = 'http://schema-registry-confluent.internal.dev.waldo.photos';
+// testLib.KAFKA_BROKER_URL = 'broker-1.service.consul:9092,broker-3.service.consul:9092,broker-2.service.consul:9092';
+
+testLib.KAFKA_SCHEMA_REGISTRY_URL = 'http://localhost:8081';
+testLib.KAFKA_BROKER_URL = 'localhost:9092';
+
 testLib.topic = schemaFix.name;
+
 
 // curl -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" \
 //     --data '{"schema": "{\"name\": \"string\", \"long\": \"long\"}"}' \

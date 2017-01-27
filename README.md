@@ -22,7 +22,17 @@ The kafka-avro library operates in the following steps:
 
 The instances of "node-rdkafka" that are returned by kafka-avro are hacked so as to intercept produced and consumed messages and run them by the Avro de/serializer.
 
-You are highly encouraged to read the ["node-rdkafka" documentation](https://blizzard.github.io/node-rdkafka/current/), as it explains how you can use the Producer and Consumer instances as well as check out the [available configuration options of node-rdkafka](https://github.com/edenhill/librdkafka/blob/2213fb29f98a7a73f22da21ef85e0783f6fd67c4/CONFIGURATION.md)
+You are highly encouraged to read the ["node-rdkafka" documentation](https://blizzard.github.io/node-rdkafka/current/), as it explains how you can use the Producer and Consumer instances as well as check out the [available configuration options of node-rdkafka](https://github.com/edenhill/librdkafka/blob/2213fb29f98a7a73f22da21ef85e0783f6fd67c4/CONFIGURATION.md).
+
+### node-rdkafka CODES
+
+The `Kafka.CODES` enumeration of constant values provided by the "node-rdkafka" library is also available as a static var at:
+
+```js
+var KafkaAvro = require('kafka-avro');
+
+console.log(KafkaAvro.CODES);
+```
 
 ### Initialize kafka-avro
 
@@ -42,9 +52,11 @@ kafkaAvro.init()
     });
 ```
 
-### Quick Usage Producer
+### Producer
 
 > NOTICE: You need to initialize kafka-avro before you can produce or consume messages.
+
+By inoking the `kafkaAvro.getProducer()` method, kafka-avro will instantiate a Producer, make it connect and wait for it to be ready before the promise is resolved.
 
 ```js
 kafkaAvro.getProducer({
@@ -79,9 +91,32 @@ What kafka-avro basically does is wrap around node-rdkafka and intercept the pro
 * [node-rdkafka Producer Tutorial](https://blizzard.github.io/node-rdkafka/current/tutorial-producer_.html)
 * [Full list of Producer's options](https://github.com/edenhill/librdkafka/blob/2213fb29f98a7a73f22da21ef85e0783f6fd67c4/CONFIGURATION.md)
 
-### Quick Usage Consumer
+### Consumer
 
 > NOTICE: You need to initialize kafka-avro before you can produce or consume messages.
+
+By inoking the `kafkaAvro.getConsumer()` method, kafka-avro will instantiate a Consumer, make it connect and wait for it to be ready before the promise is resolved.
+
+
+#### Consumer using events to consume
+
+```js
+kafkaAvro.getConsumer({
+  'group.id': 'librd-test',
+  'socket.keepalive.enable': true,
+  'enable.auto.commit': true,
+})
+  // the "getConsumer()" method will return a bluebird promise.
+  .then(function(consumer) {
+    var topicName = 'test';
+    this.consumer.consume([topicName]);
+    this.consumer.on('data', function(rawData) {
+      console.log('data:', rawData);
+    });
+  });
+```
+
+#### Consumer using streams to consume
 
 ```js
 kafkaAvro.getConsumer({
@@ -139,6 +174,9 @@ kafka-avro intercepts all incoming messages and augments the object with one mor
 
 ## Release History
 
+- **v0.1.1**, *27 Jan 2016*
+    - Expose CODES enum from node-rdkafka.
+    - Write more docs, add the event based consuming method.
 - **v0.1.0**, *26 Jan 2016*
     - First fully working release.
 - **v0.0.1**, *25 Jan 2016*

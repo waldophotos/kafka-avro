@@ -27,7 +27,7 @@ describe('Consume', function() {
       'enable.auto.commit': true,
       // 'session.timeout.ms': 1000,
     };
-    return this.kafkaAvro.getConsumer(testLib.topic, this.consOpts)
+    return this.kafkaAvro.getConsumer(this.consOpts)
       .bind(this)
       .then(function (consumer) {
         this.consumer = consumer;
@@ -100,8 +100,10 @@ describe('Consume', function() {
         done();
       }.bind(this));
 
-      produceTime = Date.now();
-      this.producer.produce(this.producerTopic, -1, message, 'key');
+      setTimeout(() => {
+        produceTime = Date.now();
+        this.producer.produce(this.producerTopic, -1, message, 'key');
+      }, 2000);
 
       //need to keep polling for a while to ensure the delivery reports are received
       var pollLoop = setInterval(function () {
@@ -153,9 +155,11 @@ describe('Consume', function() {
         }
       }.bind(this));
 
-      produceTime = Date.now();
-      this.producer.produce(this.producerTopicTwo, -1, message, 'key');
-      this.producer.produce(this.producerTopic, -1, message, 'key');
+      setTimeout(() => {
+        produceTime = Date.now();
+        this.producer.produce(this.producerTopicTwo, -1, message, 'key');
+        this.producer.produce(this.producerTopic, -1, message, 'key');
+      }, 2000);
 
       //need to keep polling for a while to ensure the delivery reports are received
       var pollLoop = setInterval(function () {
@@ -197,9 +201,11 @@ describe('Consume', function() {
         done();
       }.bind(this));
 
-      produceTime = Date.now();
-      this.producer.produce(this.producerTopic, -1, message, 'key');
 
+      setTimeout(() => {
+        produceTime = Date.now();
+        this.producer.produce(this.producerTopic, -1, message, 'key');
+      }, 2000);
       //need to keep polling for a while to ensure the delivery reports are received
       var pollLoop = setInterval(function () {
         this.producer.poll();

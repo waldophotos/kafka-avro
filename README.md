@@ -174,6 +174,9 @@ kafka-avro intercepts all incoming messages and augments the object with one mor
 
 ## Release History
 
+- **v0.1.1**, *27 Jan 2016*
+    - Expose CODES enum from node-rdkafka.
+    - Write more docs, add the event based consuming method.
 - **v0.1.0**, *26 Jan 2016*
     - First fully working release.
 - **v0.0.1**, *25 Jan 2016*

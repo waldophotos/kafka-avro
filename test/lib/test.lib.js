@@ -21,12 +21,12 @@ var testBoot = false;
  *
  */
 testLib.init = function() {
-  if (testBoot) {
-    return;
-  }
-  testBoot = true;
-
   beforeEach(function() {
+    if (testBoot) {
+      return;
+    }
+    testBoot = true;
+
     return Promise.all([
       testLib.registerSchema(testLib.topic, schemaFix),
       testLib.registerSchema(testLib.topicTwo, schemaFix),
@@ -48,6 +48,9 @@ testLib.registerSchema = Promise.method(function(topic, schema) {
   var data = {
     schema: JSON.stringify(schema),
   };
+
+  console.log('TEST :: Registering schema:', topic, 'on SR:', schemaCreateUrl);
+
   return axios({
     url: schemaCreateUrl,
     method: 'post',

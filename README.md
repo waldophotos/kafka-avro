@@ -42,6 +42,7 @@ var KafkaAvro = require('kafka-avro');
 var kafkaAvro = new KafkaAvro({
     kafkaBroker: 'localhost:9092',
     schemaRegistry: 'localhost:8081',
+    hasMagicByte: 'true',
 });
 
 // Query the Schema Registry for all topic-schema's
@@ -52,11 +53,19 @@ kafkaAvro.init()
     });
 ```
 
+### Kafka-avro options
+
+When instantiating kafka-avro you may pass the following options:
+
+* `kafkaBroker` **String REQUIRED** The url or comma delimited strings pointing to your kafka brokers.
+* `schemaRegistry` **String REQUIRED** The url to the Schema Registry.
+* `hasMagicByte` **Boolean** *Default*: `false` Enable this for Confluence Schema Registry Magic Byte insertion.
+
 ### Producer
 
 > NOTICE: You need to initialize kafka-avro before you can produce or consume messages.
 
-By inoking the `kafkaAvro.getProducer()` method, kafka-avro will instantiate a Producer, make it connect and wait for it to be ready before the promise is resolved.
+By invoking the `kafkaAvro.getProducer()` method, kafka-avro will instantiate a Producer, make it connect and wait for it to be ready before the promise is resolved.
 
 ```js
 kafkaAvro.getProducer({

@@ -21,7 +21,7 @@
     "node": ">=0.12"
   },
   "scripts": {
-    "test": "eslint lib && mocha -b test/spec && eslint lib/**"
+    "test": "mocha -b test/spec && mocha -b test/magic && eslint lib/**"
   },
   "dependencies": {
     "avsc": "^4.1.11",

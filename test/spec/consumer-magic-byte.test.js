@@ -11,7 +11,7 @@ var testLib = require('../lib/test.lib');
 
 function noop() {}
 
-describe('Consume with Magic Byte', function() {
+describe('Consume with Magic Byte (MB)', function() {
   testLib.init();
 
   beforeEach(function() {
@@ -80,8 +80,8 @@ describe('Consume with Magic Byte', function() {
     return this.kafkaAvro.dispose();
   });
 
-  describe('Consumer direct "on"', function() {
-    it('should produce and consume a message using consume "on"', function(done) {
+  describe('MB Consumer direct "on"', function() {
+    it('MB should produce and consume a message using consume "on"', function(done) {
       var produceTime = 0;
 
       var message = {
@@ -121,7 +121,7 @@ describe('Consume with Magic Byte', function() {
       // }.bind(this), 1000);
     });
 
-    it('should produce and consume on two topics using a single consumer', function(done) {
+    it('MB should produce and consume on two topics using a single consumer', function(done) {
       var produceTime = 0;
 
       var message = {
@@ -168,8 +168,8 @@ describe('Consume with Magic Byte', function() {
     });
   });
 
-  describe('Consume using Streams', function() {
-    it('should produce and consume a message using streams', function(done) {
+  describe('MB Consume using Streams', function() {
+    it('MB should produce and consume a message using streams', function(done) {
       var produceTime = 0;
 
       var message = {

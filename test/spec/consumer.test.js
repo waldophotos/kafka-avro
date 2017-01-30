@@ -1,13 +1,13 @@
 /**
  * @fileOverview Test produce and consume messages using kafka-avro.
  */
+var crypto = require('crypto');
 
 var chai = require('chai');
 var expect = chai.expect;
 
 var KafkaAvro = require('../..');
 var testLib = require('../lib/test.lib');
-
 
 describe('Consume', function() {
   testLib.init();
@@ -23,8 +23,9 @@ describe('Consume', function() {
 
   beforeEach(function() {
     this.consOpts = {
-      'group.id': 'testKafkaAvro',
+      'group.id': 'testKafkaAvro' + crypto.randomBytes(20).toString('hex'),
       'enable.auto.commit': true,
+      // 'auto.offset.reset': 'earliest',
       // 'session.timeout.ms': 1000,
     };
     return this.kafkaAvro.getConsumer(this.consOpts)
@@ -68,6 +69,12 @@ describe('Consume', function() {
       });
   });
 
+  afterEach(function(done) {
+    this.producer.disconnect(function() {
+      done();
+    });
+  });
+
   describe('Consumer direct "on"', function() {
     afterEach(function(done) {
       this.consumer.disconnect(function() {
@@ -103,16 +110,16 @@ describe('Consume', function() {
       setTimeout(() => {
         produceTime = Date.now();
         this.producer.produce(this.producerTopic, -1, message, 'key');
-      }, 2000);
+      }, 4000);
 
-      //need to keep polling for a while to ensure the delivery reports are received
-      var pollLoop = setInterval(function () {
-        this.producer.poll();
-        if (this.gotReceipt) {
-          clearInterval(pollLoop);
-          this.producer.disconnect();
-        }
-      }.bind(this), 1000);
+      // //need to keep polling for a while to ensure the delivery reports are received
+      // var pollLoop = setInterval(function () {
+      //   this.producer.poll();
+      //   if (this.gotReceipt) {
+      //     clearInterval(pollLoop);
+      //     this.producer.disconnect();
+      //   }
+      // }.bind(this), 1000);
     });
 
     it('should produce and consume on two topics using a single consumer', function(done) {
@@ -133,7 +140,6 @@ describe('Consume', function() {
       var receivedTwo = false;
 
       this.consumer.on('data', function(rawData) {
-        console.log('GOT:', rawData);
         if (rawData.topic === testLib.topic) {
           receivedOne = true;
         } else {
@@ -160,17 +166,7 @@ describe('Consume', function() {
         this.producer.produce(this.producerTopicTwo, -1, message, 'key');
         this.producer.produce(this.producerTopic, -1, message, 'key');
       }, 2000);
-
-      //need to keep polling for a while to ensure the delivery reports are received
-      var pollLoop = setInterval(function () {
-        this.producer.poll();
-        if (this.gotReceipt) {
-          clearInterval(pollLoop);
-          this.producer.disconnect();
-        }
-      }.bind(this), 1000);
     });
-
   });
 
   describe('Consume using Streams', function() {
@@ -201,19 +197,10 @@ describe('Consume', function() {
         done();
       }.bind(this));
 
-
       setTimeout(() => {
         produceTime = Date.now();
         this.producer.produce(this.producerTopic, -1, message, 'key');
       }, 2000);
-      //need to keep polling for a while to ensure the delivery reports are received
-      var pollLoop = setInterval(function () {
-        this.producer.poll();
-        if (this.gotReceipt) {
-          clearInterval(pollLoop);
-          this.producer.disconnect();
-        }
-      }.bind(this), 1000);
     });
   });
 });

@@ -183,6 +183,8 @@ kafka-avro intercepts all incoming messages and augments the object with one mor
 
 ## Release History
 
+- **v0.2.0**, *30 Jan 2016*
+    - Added Confluent's Magic Byte support when encoding and decoding messages.
 - **v0.1.2**, *27 Jan 2016*
     - Suppress schema parsing errors.
 - **v0.1.1**, *27 Jan 2016*

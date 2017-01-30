@@ -9,6 +9,8 @@ var expect = chai.expect;
 var KafkaAvro = require('../..');
 var testLib = require('../lib/test.lib');
 
+function noop() {}
+
 describe('Consume with Magic Byte', function() {
   testLib.init();
 
@@ -33,6 +35,9 @@ describe('Consume with Magic Byte', function() {
       .bind(this)
       .then(function (consumer) {
         this.consumer = consumer;
+        this.consumer.on('error', function(err) {
+          console.log('consumerError:', err);
+        });
       });
   });
 
@@ -70,19 +75,12 @@ describe('Consume with Magic Byte', function() {
       });
   });
 
-  afterEach(function(done) {
-    this.producer.disconnect(function() {
-      done();
-    });
+
+  afterEach(function() {
+    return this.kafkaAvro.dispose();
   });
 
   describe('Consumer direct "on"', function() {
-    afterEach(function(done) {
-      this.consumer.disconnect(function() {
-        done();
-      });
-    });
-
     it('should produce and consume a message using consume "on"', function(done) {
       var produceTime = 0;
 
@@ -182,6 +180,7 @@ describe('Consume with Magic Byte', function() {
       var stream = this.consumer.getReadStream(testLib.topic, {
         waitInterval: 0
       });
+      stream.on('error', noop);
 
       stream.on('data', function(dataRaw) {
         var data = dataRaw.parsed;

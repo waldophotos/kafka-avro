@@ -1,5 +1,5 @@
 /**
- * @fileOverview Test produce and consume messages using kafka-avro.
+ * @fileOverview Test produce and consume messages using kafka-avro and magic byte.
  */
 var crypto = require('crypto');
 
@@ -9,15 +9,16 @@ var expect = chai.expect;
 var KafkaAvro = require('../..');
 var testLib = require('../lib/test.lib');
 
-function noop () {}
+function noop() {}
 
-describe('Consume', function() {
+describe('Consume with Magic Byte', function() {
   testLib.init();
 
   beforeEach(function() {
     this.kafkaAvro = new KafkaAvro({
       kafkaBroker: testLib.KAFKA_BROKER_URL,
       schemaRegistry: testLib.KAFKA_SCHEMA_REGISTRY_URL,
+      hasMagicByte: true,
     });
 
     return this.kafkaAvro.init();
@@ -73,6 +74,7 @@ describe('Consume', function() {
 
       });
   });
+
 
   afterEach(function() {
     return this.kafkaAvro.dispose();

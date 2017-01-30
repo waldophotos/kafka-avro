@@ -2,6 +2,8 @@
 
 > Node.js bindings for librdkafka with Avro schema serialization.
 
+[![CircleCI](https://circleci.com/gh/waldophotos/kafka-avro/tree/master.svg?style=svg)](https://circleci.com/gh/waldophotos/kafka-avro/tree/master)
+
 The kafka-avro library is a wrapper that combines the [node-rdkafka][node-rdkafka] and [avsc](avsc) libraries to allow for Production and Consumption of messages on kafka validated and serialized by Avro.
 
 ## Install
@@ -42,6 +44,7 @@ var KafkaAvro = require('kafka-avro');
 var kafkaAvro = new KafkaAvro({
     kafkaBroker: 'localhost:9092',
     schemaRegistry: 'localhost:8081',
+    hasMagicByte: 'true',
 });
 
 // Query the Schema Registry for all topic-schema's
@@ -52,11 +55,19 @@ kafkaAvro.init()
     });
 ```
 
+### Kafka-avro options
+
+When instantiating kafka-avro you may pass the following options:
+
+* `kafkaBroker` **String REQUIRED** The url or comma delimited strings pointing to your kafka brokers.
+* `schemaRegistry` **String REQUIRED** The url to the Schema Registry.
+* `hasMagicByte` **Boolean** *Default*: `false` Enable this for Confluence Schema Registry Magic Byte insertion.
+
 ### Producer
 
 > NOTICE: You need to initialize kafka-avro before you can produce or consume messages.
 
-By inoking the `kafkaAvro.getProducer()` method, kafka-avro will instantiate a Producer, make it connect and wait for it to be ready before the promise is resolved.
+By invoking the `kafkaAvro.getProducer()` method, kafka-avro will instantiate a Producer, make it connect and wait for it to be ready before the promise is resolved.
 
 ```js
 kafkaAvro.getProducer({
@@ -174,6 +185,8 @@ kafka-avro intercepts all incoming messages and augments the object with one mor
 
 ## Release History
 
+- **v0.2.0**, *30 Jan 2016*
+    - Added Confluent's Magic Byte support when encoding and decoding messages.
 - **v0.1.2**, *27 Jan 2016*
     - Suppress schema parsing errors.
 - **v0.1.1**, *27 Jan 2016*

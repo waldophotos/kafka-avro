@@ -7,7 +7,6 @@ var expect = chai.expect;
 var KafkaAvro = require('../..');
 var testLib = require('../lib/test.lib');
 
-
 describe('Produce', function() {
   testLib.init();
 
@@ -74,7 +73,8 @@ describe('Produce', function() {
       long: '540',
     };
 
-    var binded = this.producer.produce.bind(this.producer, this.producerTopic, -1, message, 'key');
+    var binded = this.producer.produce.bind(this.producer, this.producerTopic,
+      -1, message, 'key');
 
     expect(binded).to.throw(Error);
   });

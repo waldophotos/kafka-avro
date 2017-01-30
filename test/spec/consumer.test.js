@@ -25,6 +25,7 @@ describe('Consume', function() {
 
   beforeEach(function() {
     this.consOpts = {
+      'debug': 'all',
       'group.id': 'testKafkaAvro' + crypto.randomBytes(20).toString('hex'),
       'enable.auto.commit': true,
       // 'auto.offset.reset': 'earliest',
@@ -42,6 +43,7 @@ describe('Consume', function() {
 
   beforeEach(function() {
     return this.kafkaAvro.getProducer({
+      'debug': 'all',
       'dr_cb': true,
     })
       .bind(this)
@@ -218,6 +220,7 @@ describe('Consume with Magic Byte (MB)', function() {
 
   beforeEach(function() {
     this.consOpts = {
+      'debug': 'all',
       'group.id': 'testKafkaAvro' + crypto.randomBytes(20).toString('hex'),
       'enable.auto.commit': true,
       // 'auto.offset.reset': 'earliest',
@@ -235,6 +238,7 @@ describe('Consume with Magic Byte (MB)', function() {
 
   beforeEach(function() {
     return this.kafkaAvro.getProducer({
+      'debug': 'all',
       'dr_cb': true,
     })
       .bind(this)

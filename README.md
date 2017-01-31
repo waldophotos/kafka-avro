@@ -201,7 +201,7 @@ kafka-avro intercepts all incoming messages and augments the object with one mor
 
 ## License
 
-Copyright Waldo, Inc. All rights reserved.
+Copyright Waldo, Inc. [Licensed under the MIT](/LICENSE).
 
 [avsc]: https://github.com/mtth/avsc
 [node-rdkafka]: https://github.com/Blizzard/node-rdkafka

@@ -29,6 +29,8 @@ testLib.init = function() {
     }
     testBoot = true;
 
+    this.timeout(180000); // wait up to 3' for the SR to come up
+
     return Promise.all([
       testLib.registerSchema(testLib.topic, schemaFix),
       testLib.registerSchema(testLib.topicTwo, schemaFix),
@@ -51,15 +53,18 @@ testLib.init = function() {
  *
  * @param {string} The topic.
  * @param {schema} Object The schema to register.
+ * @param {number=} retries how many times has retried.
  * @return {Promise} A Promise.
  */
-testLib.registerSchema = Promise.method(function(topic, schema) {
+testLib.registerSchema = Promise.method(function(topic, schema, retries) {
   var schemaCreateUrl = testLib.KAFKA_SCHEMA_REGISTRY_URL +
     '/subjects/' + topic + '-value/versions';
 
   var data = {
     schema: JSON.stringify(schema),
   };
+
+  retries = retries || 0;
 
   console.log('TEST :: Registering schema:', topic, 'on SR:', schemaCreateUrl);
 
@@ -72,8 +77,9 @@ testLib.registerSchema = Promise.method(function(topic, schema) {
     data: data,
   })
     .catch(function(err) {
-      console.error('Axios SR creation failed:', err);
-      throw err;
+      console.error('Axios SR creation failed:', retries, err.message);
+      retries++;
+      return testLib.registerSchema(topic, schema, retries);
     });
 });
 

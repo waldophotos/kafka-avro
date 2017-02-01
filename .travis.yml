@@ -8,6 +8,9 @@ services:
 cache:
   directories:
   - node_modules
+addons:
+  hosts:
+    - kafka
 before_install:
   - docker-compose up -d
   - sudo apt-get update -qq

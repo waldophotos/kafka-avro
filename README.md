@@ -209,6 +209,8 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 - **v0.3.0**, *01 Feb 2017*
     - Now force uses Magic Byte in any occasion when de/serializing.
     - Exposed `serialize()` and `deserialize()` methods.
+    - Fixed de/serializing of topics not found in the Schema Registry.
+    - Tweaked log namespaces, still more work required to eventize them.
 - **v0.2.0**, *30 Jan 2017*
     - Added Confluent's Magic Byte support when encoding and decoding messages.
 - **v0.1.2**, *27 Jan 2017*

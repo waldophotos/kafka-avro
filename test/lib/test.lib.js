@@ -79,7 +79,12 @@ testLib.registerSchema = Promise.method(function(topic, schema, retries) {
     .catch(function(err) {
       console.error('Axios SR creation failed:', retries, err.message);
       retries++;
-      return testLib.registerSchema(topic, schema, retries);
+      return new Promise(function(resolve) {
+        setTimeout(function() {
+          testLib.registerSchema(topic, schema, retries)
+            .then(resolve);
+        }, 1000);
+      });
     });
 });
 

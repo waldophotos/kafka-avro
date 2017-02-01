@@ -20,9 +20,9 @@ The kafka-avro library operates in the following steps:
 
 1. You provide your Kafka Brokers and Schema Registry (SR) Url to a new instance of kafka-avro.
 1. You initialize kafka-avro, that will tell the library to query the SR for all registered schemas, evaluate and store them in runtime memory.
-1. kafka-avro will then expose the `getConsumer()` and `getProducer()` methods, which both return instsances of the corresponding Constructors from the [node-rdkafka][node-rdkafka] library.
+1. kafka-avro will then expose the `getConsumer()` and `getProducer()` methods, which both return instances of the corresponding Constructors from the [node-rdkafka][node-rdkafka] library.
 
-The instances of "node-rdkafka" that are returned by kafka-avro are hacked so as to intercept produced and consumed messages and run them by the Avro de/serializer.
+The instances of "node-rdkafka" that are returned by kafka-avro are hacked so as to intercept produced and consumed messages and run them by the Avro de/serializer along with Confluent's Schema Registry Magic Byte and Schema Id.
 
 You are highly encouraged to read the ["node-rdkafka" documentation](https://blizzard.github.io/node-rdkafka/current/), as it explains how you can use the Producer and Consumer instances as well as check out the [available configuration options of node-rdkafka](https://github.com/edenhill/librdkafka/blob/2213fb29f98a7a73f22da21ef85e0783f6fd67c4/CONFIGURATION.md).
 
@@ -44,7 +44,6 @@ var KafkaAvro = require('kafka-avro');
 var kafkaAvro = new KafkaAvro({
     kafkaBroker: 'localhost:9092',
     schemaRegistry: 'localhost:8081',
-    hasMagicByte: 'true',
 });
 
 // Query the Schema Registry for all topic-schema's
@@ -61,7 +60,6 @@ When instantiating kafka-avro you may pass the following options:
 
 * `kafkaBroker` **String REQUIRED** The url or comma delimited strings pointing to your kafka brokers.
 * `schemaRegistry` **String REQUIRED** The url to the Schema Registry.
-* `hasMagicByte` **Boolean** *Default*: `false` Enable this for Confluence Schema Registry Magic Byte insertion.
 
 ### Producer
 
@@ -181,7 +179,7 @@ The KafkaAvro instance also provides the following methods:
 
 #### kafkaAvro.serialize(type, schemaId, value)
 
-Serialize the provided value.
+Serialize the provided value with Avro, including the magic Byte and schema id provided.
 
 **Returns** {Buffer} Serialized buffer message.
 
@@ -191,7 +189,7 @@ Serialize the provided value.
 
 #### kafkaAvro.deserialize(type, message)
 
-Deserialize the provided message.
+Deserialize the provided message, expects a message that includes Magic Byte and schema id.
 
 **Returns** {*} Deserialized message.
 

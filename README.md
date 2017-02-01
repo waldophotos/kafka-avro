@@ -196,6 +196,10 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 * `type` {avsc.Type} The avro type instance.
 * `message` {Buffer} Message in byte code.
 
+## Testing
+
+[Use the kafka-avro-stub library](https://github.com/waldophotos/kafka-avro-stub) to avoid requiring Kafka and Schema Registry to run on your local for testing your service.
+
 ## Releasing
 
 1. Update the changelog bellow.

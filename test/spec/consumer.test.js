@@ -14,7 +14,7 @@ function noop () {}
 describe('Consume', function() {
   testLib.init();
 
-  beforeEach(function() {
+  before(function() {
     this.kafkaAvro = new KafkaAvro({
       kafkaBroker: testLib.KAFKA_BROKER_URL,
       schemaRegistry: testLib.KAFKA_SCHEMA_REGISTRY_URL,
@@ -25,7 +25,7 @@ describe('Consume', function() {
 
   beforeEach(function() {
     this.consOpts = {
-      'debug': 'all',
+      // 'debug': 'all',
       'group.id': 'testKafkaAvro' + crypto.randomBytes(20).toString('hex'),
       'enable.auto.commit': true,
       // 'auto.offset.reset': 'earliest',
@@ -43,7 +43,7 @@ describe('Consume', function() {
 
   beforeEach(function() {
     return this.kafkaAvro.getProducer({
-      'debug': 'all',
+      // 'debug': 'all',
       'dr_cb': true,
     })
       .bind(this)
@@ -220,7 +220,7 @@ describe('Consume with Magic Byte (MB)', function() {
 
   beforeEach(function() {
     this.consOpts = {
-      'debug': 'all',
+      // 'debug': 'all',
       'group.id': 'testKafkaAvro' + crypto.randomBytes(20).toString('hex'),
       'enable.auto.commit': true,
       // 'auto.offset.reset': 'earliest',
@@ -238,7 +238,7 @@ describe('Consume with Magic Byte (MB)', function() {
 
   beforeEach(function() {
     return this.kafkaAvro.getProducer({
-      'debug': 'all',
+      // 'debug': 'all',
       'dr_cb': true,
     })
       .bind(this)
@@ -298,7 +298,6 @@ describe('Consume with Magic Byte (MB)', function() {
         ]);
         expect(data.name).to.equal(message.name);
         expect(data.long).to.equal(message.long);
-
         done();
       }.bind(this));
 

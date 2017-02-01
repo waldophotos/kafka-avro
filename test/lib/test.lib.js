@@ -4,6 +4,8 @@
 var axios = require('axios');
 var Promise = require('bluebird');
 
+var KafkaAvro = require('../..');
+
 var schemaFix = require('../fixtures/schema.fix');
 
 var testLib = module.exports = {};
@@ -32,6 +34,16 @@ testLib.init = function() {
       testLib.registerSchema(testLib.topicTwo, schemaFix),
     ]);
   });
+
+  beforeEach(function() {
+    this.kafkaAvro = new KafkaAvro({
+      kafkaBroker: testLib.KAFKA_BROKER_URL,
+      schemaRegistry: testLib.KAFKA_SCHEMA_REGISTRY_URL,
+    });
+
+    return this.kafkaAvro.init();
+  });
+
 };
 
 /**

@@ -6,22 +6,12 @@ var crypto = require('crypto');
 var chai = require('chai');
 var expect = chai.expect;
 
-var KafkaAvro = require('../..');
 var testLib = require('../lib/test.lib');
 
 function noop () {}
 
 describe('Consume', function() {
   testLib.init();
-
-  before(function() {
-    this.kafkaAvro = new KafkaAvro({
-      kafkaBroker: testLib.KAFKA_BROKER_URL,
-      schemaRegistry: testLib.KAFKA_SCHEMA_REGISTRY_URL,
-    });
-
-    return this.kafkaAvro.init();
-  });
 
   beforeEach(function() {
     this.consOpts = {

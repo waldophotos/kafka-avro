@@ -20,9 +20,9 @@ The kafka-avro library operates in the following steps:
 
 1. You provide your Kafka Brokers and Schema Registry (SR) Url to a new instance of kafka-avro.
 1. You initialize kafka-avro, that will tell the library to query the SR for all registered schemas, evaluate and store them in runtime memory.
-1. kafka-avro will then expose the `getConsumer()` and `getProducer()` methods, which both return instsances of the corresponding Constructors from the [node-rdkafka][node-rdkafka] library.
+1. kafka-avro will then expose the `getConsumer()` and `getProducer()` methods, which both return instances of the corresponding Constructors from the [node-rdkafka][node-rdkafka] library.
 
-The instances of "node-rdkafka" that are returned by kafka-avro are hacked so as to intercept produced and consumed messages and run them by the Avro de/serializer.
+The instances of "node-rdkafka" that are returned by kafka-avro are hacked so as to intercept produced and consumed messages and run them by the Avro de/serializer along with Confluent's Schema Registry Magic Byte and Schema Id.
 
 You are highly encouraged to read the ["node-rdkafka" documentation](https://blizzard.github.io/node-rdkafka/current/), as it explains how you can use the Producer and Consumer instances as well as check out the [available configuration options of node-rdkafka](https://github.com/edenhill/librdkafka/blob/2213fb29f98a7a73f22da21ef85e0783f6fd67c4/CONFIGURATION.md).
 
@@ -44,7 +44,6 @@ var KafkaAvro = require('kafka-avro');
 var kafkaAvro = new KafkaAvro({
     kafkaBroker: 'localhost:9092',
     schemaRegistry: 'localhost:8081',
-    hasMagicByte: 'true',
 });
 
 // Query the Schema Registry for all topic-schema's
@@ -61,7 +60,6 @@ When instantiating kafka-avro you may pass the following options:
 
 * `kafkaBroker` **String REQUIRED** The url or comma delimited strings pointing to your kafka brokers.
 * `schemaRegistry` **String REQUIRED** The url to the Schema Registry.
-* `hasMagicByte` **Boolean** *Default*: `false` Enable this for Confluence Schema Registry Magic Byte insertion.
 
 ### Producer
 
@@ -175,6 +173,29 @@ kafka-avro intercepts all incoming messages and augments the object with one mor
 * `partition` **Number** The kafka partion used.
 * `parsed` **Object** The avro deserialized message as a JS Object ltieral.
 
+### Helper Methods
+
+The KafkaAvro instance also provides the following methods:
+
+#### kafkaAvro.serialize(type, schemaId, value)
+
+Serialize the provided value with Avro, including the magic Byte and schema id provided.
+
+**Returns** {Buffer} Serialized buffer message.
+
+* `type` {avsc.Type} The avro type instance.
+* `schemaId` {number} The Schema Id in the SR.
+* `value` {*} Any value to serialize.
+
+#### kafkaAvro.deserialize(type, message)
+
+Deserialize the provided message, expects a message that includes Magic Byte and schema id.
+
+**Returns** {*} Deserialized message.
+
+* `type` {avsc.Type} The avro type instance.
+* `message` {Buffer} Message in byte code.
+
 ## Releasing
 
 1. Update the changelog bellow.
@@ -185,18 +206,23 @@ kafka-avro intercepts all incoming messages and augments the object with one mor
 
 ## Release History
 
-- **v0.2.0**, *30 Jan 2016*
+- **v0.3.0**, *01 Feb 2017*
+    - Now force uses Magic Byte in any occasion when de/serializing.
+    - Exposed `serialize()` and `deserialize()` methods.
+    - Fixed de/serializing of topics not found in the Schema Registry.
+    - Tweaked log namespaces, still more work required to eventize them.
+- **v0.2.0**, *30 Jan 2017*
     - Added Confluent's Magic Byte support when encoding and decoding messages.
-- **v0.1.2**, *27 Jan 2016*
+- **v0.1.2**, *27 Jan 2017*
     - Suppress schema parsing errors.
-- **v0.1.1**, *27 Jan 2016*
+- **v0.1.1**, *27 Jan 2017*
     - Fix signature of `getConsumer()` method.
-- **v0.1.1**, *27 Jan 2016*
+- **v0.1.1**, *27 Jan 2017*
     - Expose CODES enum from node-rdkafka.
     - Write more docs, add the event based consuming method.
-- **v0.1.0**, *26 Jan 2016*
+- **v0.1.0**, *26 Jan 2017*
     - First fully working release.
-- **v0.0.1**, *25 Jan 2016*
+- **v0.0.1**, *25 Jan 2017*
     - Big Bang
 
 ## License

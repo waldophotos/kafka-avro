@@ -4,20 +4,10 @@
 var chai = require('chai');
 var expect = chai.expect;
 
-var KafkaAvro = require('../..');
 var testLib = require('../lib/test.lib');
 
 describe('Produce', function() {
   testLib.init();
-
-  beforeEach(function() {
-    this.kafkaAvro = new KafkaAvro({
-      kafkaBroker: testLib.KAFKA_BROKER_URL,
-      schemaRegistry: testLib.KAFKA_SCHEMA_REGISTRY_URL,
-    });
-
-    return this.kafkaAvro.init();
-  });
 
   beforeEach(function() {
     return this.kafkaAvro.getProducer({

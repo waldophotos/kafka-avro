@@ -121,6 +121,40 @@ describe('Consume', function() {
       // }.bind(this), 1000);
     });
 
+    it('should produce and consume a message using consume "on", on a non Schema Registry topic', function(done) {
+      var produceTime = 0;
+
+      var topicName = 'testKafkaAvro' + crypto.randomBytes(20).toString('hex');
+      var producerTopic = this.producer.Topic(topicName, {});
+
+      var message = {
+        name: 'Thanasis',
+        long: 540,
+      };
+
+      // //start consuming messages
+      this.consumer.consume([topicName]);
+
+      this.consumer.on('data', function(rawData) {
+        var data = rawData.parsed;
+        var diff = Date.now() - produceTime;
+        console.log('Produce to consume time in ms:', diff);
+        expect(data).to.have.keys([
+          'name',
+          'long',
+        ]);
+        expect(data.name).to.equal(message.name);
+        expect(data.long).to.equal(message.long);
+
+        done();
+      }.bind(this));
+
+      setTimeout(() => {
+        produceTime = Date.now();
+        this.producer.produce(producerTopic, -1, message, 'key');
+      }, 4000);
+    });
+
     it('should produce and consume on two topics using a single consumer', function(done) {
       var produceTime = 0;
 
@@ -202,5 +236,42 @@ describe('Consume', function() {
         this.producer.produce(this.producerTopic, -1, message, 'key');
       }, 2000);
     });
+    it('should produce and consume a message using streams on a not SR topic', function(done) {
+      var produceTime = 0;
+
+      var topicName = 'testKafkaAvro' + crypto.randomBytes(20).toString('hex');
+      var producerTopic = this.producer.Topic(topicName, {});
+
+      var message = {
+        name: 'Thanasis',
+        long: 540,
+      };
+
+      var stream = this.consumer.getReadStream(topicName, {
+        waitInterval: 0
+      });
+      stream.on('error', noop);
+
+      stream.on('data', function(dataRaw) {
+        var data = dataRaw.parsed;
+        var diff = Date.now() - produceTime;
+        console.log('Produce to consume time in ms:', diff);
+        expect(data).to.have.keys([
+          'name',
+          'long',
+        ]);
+
+        expect(data.name).to.equal(message.name);
+        expect(data.long).to.equal(message.long);
+
+        done();
+      }.bind(this));
+
+      setTimeout(() => {
+        produceTime = Date.now();
+        this.producer.produce(producerTopic, -1, message, 'key');
+      }, 2000);
+    });
+
   });
 });

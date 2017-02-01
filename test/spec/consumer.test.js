@@ -21,9 +21,12 @@ describe('Consume', function() {
       // 'auto.offset.reset': 'earliest',
       // 'session.timeout.ms': 1000,
     };
+
+    console.log('beforeEach 1 on Consume');
     return this.kafkaAvro.getConsumer(this.consOpts)
       .bind(this)
       .then(function (consumer) {
+        console.log('beforeEach 1 on Consume: Got consumer');
         this.consumer = consumer;
         this.consumer.on('error', function(err) {
           console.log('consumerError:', err);
@@ -32,12 +35,14 @@ describe('Consume', function() {
   });
 
   beforeEach(function() {
+    console.log('beforeEach 2 on Consume');
     return this.kafkaAvro.getProducer({
       // 'debug': 'all',
       'dr_cb': true,
     })
       .bind(this)
       .then(function (producer) {
+        console.log('beforeEach 2 on Consume: Got producer');
         this.producer = producer;
 
         producer.on('event.log', function(log) {
@@ -62,12 +67,17 @@ describe('Consume', function() {
           // Make the Kafka broker acknowledge our message (optional)
           'request.required.acks': 1,
         });
+        console.log('beforeEach 2 on Consume: Done');
 
       });
   });
 
   afterEach(function() {
-    return this.kafkaAvro.dispose();
+    console.log('afterEach 1 on Consume: Disposing...');
+    return this.kafkaAvro.dispose()
+      .then(function() {
+        console.log('afterEach 1 on Consume: Disposed');
+      });
   });
 
   describe('Consumer direct "on"', function() {

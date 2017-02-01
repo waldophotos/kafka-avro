@@ -42,8 +42,11 @@ testLib.init = function() {
       kafkaBroker: testLib.KAFKA_BROKER_URL,
       schemaRegistry: testLib.KAFKA_SCHEMA_REGISTRY_URL,
     });
-
-    return this.kafkaAvro.init();
+    console.log('test.beforeEach 2: Invoking kafkaAvro.init()...');
+    return this.kafkaAvro.init()
+      .then(function() {
+        console.log('test.beforeEach 2: kafkaAvro.init() done!');
+      });
   });
 
 };

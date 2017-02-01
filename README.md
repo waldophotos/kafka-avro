@@ -175,6 +175,29 @@ kafka-avro intercepts all incoming messages and augments the object with one mor
 * `partition` **Number** The kafka partion used.
 * `parsed` **Object** The avro deserialized message as a JS Object ltieral.
 
+### Helper Methods
+
+The KafkaAvro instance also provides the following methods:
+
+#### kafkaAvro.serialize(type, schemaId, value)
+
+Serialize the provided value.
+
+**Returns** {Buffer} Serialized buffer message.
+
+* `type` {avsc.Type} The avro type instance.
+* `schemaId` {number} The Schema Id in the SR.
+* `value` {*} Any value to serialize.
+
+#### kafkaAvro.deserialize(type, message)
+
+Deserialize the provided message.
+
+**Returns** {*} Deserialized message.
+
+* `type` {avsc.Type} The avro type instance.
+* `message` {Buffer} Message in byte code.
+
 ## Releasing
 
 1. Update the changelog bellow.

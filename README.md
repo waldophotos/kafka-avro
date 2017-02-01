@@ -185,18 +185,19 @@ kafka-avro intercepts all incoming messages and augments the object with one mor
 
 ## Release History
 
-- **v0.2.0**, *30 Jan 2016*
+- **v0.3.0**, *01 Feb 2017*
+- **v0.2.0**, *30 Jan 2017*
     - Added Confluent's Magic Byte support when encoding and decoding messages.
-- **v0.1.2**, *27 Jan 2016*
+- **v0.1.2**, *27 Jan 2017*
     - Suppress schema parsing errors.
-- **v0.1.1**, *27 Jan 2016*
+- **v0.1.1**, *27 Jan 2017*
     - Fix signature of `getConsumer()` method.
-- **v0.1.1**, *27 Jan 2016*
+- **v0.1.1**, *27 Jan 2017*
     - Expose CODES enum from node-rdkafka.
     - Write more docs, add the event based consuming method.
-- **v0.1.0**, *26 Jan 2016*
+- **v0.1.0**, *26 Jan 2017*
     - First fully working release.
-- **v0.0.1**, *25 Jan 2016*
+- **v0.0.1**, *25 Jan 2017*
     - Big Bang
 
 ## License

@@ -3,6 +3,11 @@
  */
 var axios = require('axios');
 var Promise = require('bluebird');
+// const fmt = require('bunyan-format');
+// stream: fmt({
+//   outputMode: 'short',
+//   levelInString: true
+// }),
 
 var KafkaAvro = require('../..');
 

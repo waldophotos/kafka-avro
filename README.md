@@ -198,6 +198,7 @@ kafkaLog.addStream({
     }),
     level: 'info',
 });
+```
 
 Read more about the [bunyan-format package](https://github.com/thlorenz/bunyan-format).
 
@@ -234,6 +235,9 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 
 ## Release History
 
+- **v0.4.0**, *03 Feb 2017*
+    - Refactored all logging to use a central Bunyan logger that is now provided through the static method `KafkaAvro.getLogger()`.
+    - Allowed for an Array of strings as topic argument for Consumer's `getReadStream()` method.
 - **v0.3.0**, *01 Feb 2017*
     - Now force uses Magic Byte in any occasion when de/serializing.
     - Exposed `serialize()` and `deserialize()` methods.

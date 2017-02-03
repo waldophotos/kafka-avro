@@ -236,6 +236,40 @@ describe('Consume', function() {
         this.producer.produce(this.producerTopic, -1, message, 'key');
       }, 2000);
     });
+    it('should produce and consume a message using streams on two topics', function(done) {
+      var produceTime = 0;
+
+      var message = {
+        name: 'Thanasis',
+        long: 540,
+      };
+
+      var stream = this.consumer.getReadStream([testLib.topic, testLib.topicTwo], {
+        waitInterval: 0
+      });
+      stream.on('error', noop);
+
+      stream.on('data', function(dataRaw) {
+        var data = dataRaw.parsed;
+        var diff = Date.now() - produceTime;
+        testLib.log.info('Produce to consume time in ms:', diff);
+        expect(data).to.have.keys([
+          'name',
+          'long',
+        ]);
+
+        expect(data.name).to.equal(message.name);
+        expect(data.long).to.equal(message.long);
+
+        done();
+      }.bind(this));
+
+      setTimeout(() => {
+        produceTime = Date.now();
+        this.producer.produce(this.producerTopic, -1, message, 'key');
+      }, 2000);
+    });
+
     it('should produce and consume a message using streams on a not SR topic', function(done) {
       var produceTime = 0;
 

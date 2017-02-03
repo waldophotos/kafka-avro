@@ -135,6 +135,7 @@ kafkaAvro.getConsumer({
 })
     // the "getConsumer()" method will return a bluebird promise.
     .then(function(consumer) {
+        // Topic Name can be a string, or an array of strings
         var topicName = 'test';
 
         var stream = consumer.getReadStream(topicName, {
@@ -176,6 +177,29 @@ kafka-avro intercepts all incoming messages and augments the object with one mor
 ### Helper Methods
 
 The KafkaAvro instance also provides the following methods:
+
+#### KafkaAvro.getLogger()
+
+> **NOTICE** This is a **static method** on the `KafkaAvro` constructor, not the instance.
+
+**Returns** {Bunyan.Logger} [Bunyan logger](https://github.com/trentm/node-bunyan/) instance.
+
+```js
+var KafkaAvro = require('kafka-avro');
+var fmt = require('bunyan-format');
+
+var kafkaLog  = KafkaAvro.getLogger();
+
+kafkaLog.addStream({
+    type: 'stream',
+    stream: fmr({
+        outputMode: 'short',
+        levelInString: true,
+    }),
+    level: 'info',
+});
+
+Read more about the [bunyan-format package](https://github.com/thlorenz/bunyan-format).
 
 #### kafkaAvro.serialize(type, schemaId, value)
 

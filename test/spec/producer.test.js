@@ -17,12 +17,12 @@ describe('Produce', function() {
         this.producer = producer;
 
         producer.on('event.log', function(log) {
-          console.log('producer log:', log);
+          testLib.log.info('producer log:', log);
         });
 
         //logging all errors
         producer.on('error', function(err) {
-          console.error('Error from producer:', err);
+          testLib.log.error('Error from producer:', err);
         });
 
         producer.on('delivery-report', function() {

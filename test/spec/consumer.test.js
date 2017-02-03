@@ -22,40 +22,40 @@ describe('Consume', function() {
       // 'session.timeout.ms': 1000,
     };
 
-    console.log('beforeEach 1 on Consume');
+    testLib.log.info('beforeEach 1 on Consume');
     return this.kafkaAvro.getConsumer(this.consOpts)
       .bind(this)
       .then(function (consumer) {
-        console.log('beforeEach 1 on Consume: Got consumer');
+        testLib.log.info('beforeEach 1 on Consume: Got consumer');
         this.consumer = consumer;
         this.consumer.on('error', function(err) {
-          console.log('consumerError:', err);
+          testLib.log.info('consumerError:', err);
         });
       });
   });
 
   beforeEach(function() {
-    console.log('beforeEach 2 on Consume');
+    testLib.log.info('beforeEach 2 on Consume');
     return this.kafkaAvro.getProducer({
       // 'debug': 'all',
       'dr_cb': true,
     })
       .bind(this)
       .then(function (producer) {
-        console.log('beforeEach 2 on Consume: Got producer');
+        testLib.log.info('beforeEach 2 on Consume: Got producer');
         this.producer = producer;
 
         producer.on('event.log', function(log) {
-          console.log('producer log:', log);
+          testLib.log.info('producer log:', log);
         });
 
         //logging all errors
         producer.on('error', function(err) {
-          console.error('Error from producer:', err);
+          testLib.log.error('Error from producer:', err);
         });
 
         producer.on('delivery-report', function(err, report) {
-          console.log('delivery-report:' + JSON.stringify(report));
+          testLib.log.info('delivery-report:' + JSON.stringify(report));
           this.gotReceipt = true;
         }.bind(this));
 
@@ -67,16 +67,16 @@ describe('Consume', function() {
           // Make the Kafka broker acknowledge our message (optional)
           'request.required.acks': 1,
         });
-        console.log('beforeEach 2 on Consume: Done');
+        testLib.log.info('beforeEach 2 on Consume: Done');
 
       });
   });
 
   afterEach(function() {
-    console.log('afterEach 1 on Consume: Disposing...');
+    testLib.log.info('afterEach 1 on Consume: Disposing...');
     return this.kafkaAvro.dispose()
       .then(function() {
-        console.log('afterEach 1 on Consume: Disposed');
+        testLib.log.info('afterEach 1 on Consume: Disposed');
       });
   });
 
@@ -95,7 +95,7 @@ describe('Consume', function() {
       this.consumer.on('data', function(rawData) {
         var data = rawData.parsed;
         var diff = Date.now() - produceTime;
-        console.log('Produce to consume time in ms:', diff);
+        testLib.log.info('Produce to consume time in ms:', diff);
         expect(data).to.have.keys([
           'name',
           'long',
@@ -138,7 +138,7 @@ describe('Consume', function() {
       this.consumer.on('data', function(rawData) {
         var data = rawData.parsed;
         var diff = Date.now() - produceTime;
-        console.log('Produce to consume time in ms:', diff);
+        testLib.log.info('Produce to consume time in ms:', diff);
         expect(data).to.have.keys([
           'name',
           'long',
@@ -181,7 +181,7 @@ describe('Consume', function() {
 
         var data = rawData.parsed;
         var diff = Date.now() - produceTime;
-        console.log('Produce to consume time in ms:', diff);
+        testLib.log.info('Produce to consume time in ms:', diff);
         expect(data).to.have.keys([
           'name',
           'long',
@@ -219,7 +219,7 @@ describe('Consume', function() {
       stream.on('data', function(dataRaw) {
         var data = dataRaw.parsed;
         var diff = Date.now() - produceTime;
-        console.log('Produce to consume time in ms:', diff);
+        testLib.log.info('Produce to consume time in ms:', diff);
         expect(data).to.have.keys([
           'name',
           'long',
@@ -255,7 +255,7 @@ describe('Consume', function() {
       stream.on('data', function(dataRaw) {
         var data = dataRaw.parsed;
         var diff = Date.now() - produceTime;
-        console.log('Produce to consume time in ms:', diff);
+        testLib.log.info('Produce to consume time in ms:', diff);
         expect(data).to.have.keys([
           'name',
           'long',

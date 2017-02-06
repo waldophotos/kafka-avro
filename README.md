@@ -174,11 +174,17 @@ kafka-avro intercepts all incoming messages and augments the object with one mor
 * `partition` **Number** The kafka partion used.
 * `parsed` **Object** The avro deserialized message as a JS Object ltieral.
 
-### Helper Methods
-
 The KafkaAvro instance also provides the following methods:
 
+### Logging
+
+The Kafka Avro library logs messages using the [Bunyan logger](https://github.com/trentm/node-bunyan/).
+
+
 #### KafkaAvro.getLogger()
+
+> **WARNING** The logger will not emit any messages as it was expected, there is an [open issue on Bunyan's repository](https://github.com/trentm/node-bunyan/issues/479) pending a solution on this. So no logging for now.
+
 
 > **NOTICE** This is a **static method** on the `KafkaAvro` constructor, not the instance. Therefore there is a single logger instance for the whole runtime.
 
@@ -201,6 +207,8 @@ kafkaLog.addStream({
 ```
 
 Read more about the [bunyan-format package](https://github.com/thlorenz/bunyan-format).
+
+### Helper Methods
 
 #### kafkaAvro.serialize(type, schemaId, value)
 

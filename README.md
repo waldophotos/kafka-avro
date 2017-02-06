@@ -135,6 +135,7 @@ kafkaAvro.getConsumer({
 })
     // the "getConsumer()" method will return a bluebird promise.
     .then(function(consumer) {
+        // Topic Name can be a string, or an array of strings
         var topicName = 'test';
 
         var stream = consumer.getReadStream(topicName, {
@@ -177,6 +178,30 @@ kafka-avro intercepts all incoming messages and augments the object with one mor
 
 The KafkaAvro instance also provides the following methods:
 
+#### KafkaAvro.getLogger()
+
+> **NOTICE** This is a **static method** on the `KafkaAvro` constructor, not the instance. Therefore there is a single logger instance for the whole runtime.
+
+**Returns** {Bunyan.Logger} [Bunyan logger](https://github.com/trentm/node-bunyan/) instance.
+
+```js
+var KafkaAvro = require('kafka-avro');
+var fmt = require('bunyan-format');
+
+var kafkaLog  = KafkaAvro.getLogger();
+
+kafkaLog.addStream({
+    type: 'stream',
+    stream: fmr({
+        outputMode: 'short',
+        levelInString: true,
+    }),
+    level: 'info',
+});
+```
+
+Read more about the [bunyan-format package](https://github.com/thlorenz/bunyan-format).
+
 #### kafkaAvro.serialize(type, schemaId, value)
 
 Serialize the provided value with Avro, including the magic Byte and schema id provided.
@@ -210,6 +235,9 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 
 ## Release History
 
+- **v0.4.0**, *03 Feb 2017*
+    - Refactored all logging to use a central Bunyan logger that is now provided through the static method `KafkaAvro.getLogger()`.
+    - Allowed for an Array of strings as topic argument for Consumer's `getReadStream()` method.
 - **v0.3.0**, *01 Feb 2017*
     - Now force uses Magic Byte in any occasion when de/serializing.
     - Exposed `serialize()` and `deserialize()` methods.

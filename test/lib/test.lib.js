@@ -3,12 +3,26 @@
  */
 var axios = require('axios');
 var Promise = require('bluebird');
+const bunyan = require('bunyan');
+
+const fmt = require('bunyan-format');
 
 var KafkaAvro = require('../..');
 
 var schemaFix = require('../fixtures/schema.fix');
 
 var testLib = module.exports = {};
+
+testLib.log = bunyan.createLogger({
+  name: 'KafkaAvroTest',
+  level: 'trace',
+  // stream: {write: function() {}},
+  stream: fmt({
+    outputMode: 'long',
+    levelInString: true,
+  }),
+});
+
 
 testLib.KAFKA_SCHEMA_REGISTRY_URL = 'http://localhost:8081';
 testLib.KAFKA_BROKER_URL = 'localhost:9092';
@@ -29,6 +43,17 @@ testLib.init = function() {
     }
     testBoot = true;
 
+    let kafkaAvroLog = KafkaAvro.getLogger();
+
+    kafkaAvroLog.addStream({
+      type: 'stream',
+      stream: fmt({
+        outputMode: 'long',
+        levelInString: true,
+      }),
+      level: 'debug',
+    });
+
     this.timeout(180000); // wait up to 3' for the SR to come up
 
     return Promise.all([
@@ -38,14 +63,17 @@ testLib.init = function() {
   });
 
   beforeEach(function() {
-    this.kafkaAvro = new KafkaAvro({
+    let kafkaAvro = new KafkaAvro({
       kafkaBroker: testLib.KAFKA_BROKER_URL,
       schemaRegistry: testLib.KAFKA_SCHEMA_REGISTRY_URL,
     });
-    console.log('test.beforeEach 2: Invoking kafkaAvro.init()...');
-    return this.kafkaAvro.init()
-      .then(function() {
-        console.log('test.beforeEach 2: kafkaAvro.init() done!');
+
+    testLib.log.info('test.beforeEach 2: Invoking kafkaAvro.init()...', kafkaAvro.init);
+
+    return kafkaAvro.init()
+      .then(() => {
+        testLib.log.info('test.beforeEach 2: kafkaAvro.init() done!');
+        this.kafkaAvro = kafkaAvro;
       });
   });
 
@@ -69,7 +97,7 @@ testLib.registerSchema = Promise.method(function(topic, schema, retries) {
 
   retries = retries || 0;
 
-  console.log('TEST :: Registering schema:', topic, 'on SR:', schemaCreateUrl);
+  testLib.log.info('TEST :: Registering schema:', topic, 'on SR:', schemaCreateUrl);
 
   return axios({
     url: schemaCreateUrl,
@@ -80,7 +108,7 @@ testLib.registerSchema = Promise.method(function(topic, schema, retries) {
     data: data,
   })
     .catch(function(err) {
-      console.error('Axios SR creation failed:', retries, err.message);
+      testLib.log.error('Axios SR creation failed:', retries, err.message);
       retries++;
       return new Promise(function(resolve) {
         setTimeout(function() {
@@ -90,18 +118,6 @@ testLib.registerSchema = Promise.method(function(topic, schema, retries) {
       });
     });
 });
-
-/** @type {Object} simple logger */
-testLib.log = {
-  info: function() {
-    let args = Array.prototype.splice.call(arguments, 0);
-    console.log('INFO:', args.join(' '));
-  },
-  error: function() {
-    let args = Array.prototype.splice.call(arguments, 0);
-    console.log('ERROR:', args.join(' '));
-  },
-};
 
 /**
  * Have a Cooldown period between tests.

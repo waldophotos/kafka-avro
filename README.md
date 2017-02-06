@@ -180,7 +180,7 @@ The KafkaAvro instance also provides the following methods:
 
 #### KafkaAvro.getLogger()
 
-> **NOTICE** This is a **static method** on the `KafkaAvro` constructor, not the instance.
+> **NOTICE** This is a **static method** on the `KafkaAvro` constructor, not the instance. Therefore there is a single logger instance for the whole runtime.
 
 **Returns** {Bunyan.Logger} [Bunyan logger](https://github.com/trentm/node-bunyan/) instance.
 

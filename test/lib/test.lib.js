@@ -52,7 +52,7 @@ testLib.init = function() {
         levelInString: true,
       }),
       level: 'debug',
-    });
+    }, 'debug');
 
     this.timeout(180000); // wait up to 3' for the SR to come up
 
@@ -68,7 +68,7 @@ testLib.init = function() {
       schemaRegistry: testLib.KAFKA_SCHEMA_REGISTRY_URL,
     });
 
-    testLib.log.info('test.beforeEach 2: Invoking kafkaAvro.init()...', kafkaAvro.init);
+    testLib.log.info('test.beforeEach 2: Invoking kafkaAvro.init()...');
 
     return kafkaAvro.init()
       .then(() => {

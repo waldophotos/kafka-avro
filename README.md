@@ -192,7 +192,7 @@ var kafkaLog  = KafkaAvro.getLogger();
 
 kafkaLog.addStream({
     type: 'stream',
-    stream: fmr({
+    stream: fmt({
         outputMode: 'short',
         levelInString: true,
     }),

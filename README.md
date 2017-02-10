@@ -243,6 +243,8 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 
 ## Release History
 
+- **v0.4.1**, *10 Feb 2017*
+    - Fixed relaying Kafka consumer logs.
 - **v0.4.0**, *03 Feb 2017*
     - Refactored all logging to use a central Bunyan logger that is now provided through the static method `KafkaAvro.getLogger()`.
     - Allowed for an Array of strings as topic argument for Consumer's `getReadStream()` method.

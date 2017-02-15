@@ -90,7 +90,8 @@ describe('Consume', function() {
       };
 
       // //start consuming messages
-      this.consumer.consume([testLib.topic]);
+      this.consumer.subscribe([testLib.topic]);
+      this.consumer.consume();
 
       this.consumer.on('data', function(rawData) {
         var data = rawData.parsed;
@@ -133,7 +134,8 @@ describe('Consume', function() {
       };
 
       // //start consuming messages
-      this.consumer.consume([topicName]);
+      this.consumer.subscribe([topicName]);
+      this.consumer.consume();
 
       this.consumer.on('data', function(rawData) {
         var data = rawData.parsed;
@@ -164,10 +166,11 @@ describe('Consume', function() {
       };
 
       // //start consuming messages
-      this.consumer.consume([
+      this.consumer.subscribe([
         testLib.topic,
         testLib.topicTwo,
       ]);
+      this.consumer.consume();
 
       var receivedOne = false;
       var receivedTwo = false;

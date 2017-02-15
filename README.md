@@ -118,7 +118,8 @@ kafkaAvro.getConsumer({
   // the "getConsumer()" method will return a bluebird promise.
   .then(function(consumer) {
     var topicName = 'test';
-    this.consumer.consume([topicName]);
+    this.consumer.subscribe([topicName]);
+    this.consumer.consume();
     this.consumer.on('data', function(rawData) {
       console.log('data:', rawData);
     });
@@ -243,6 +244,8 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 
 ## Release History
 
+- **v0.5.0**, *15 Feb 2017*
+    - Upgrade to node-rdkafka `0.7.0-ALPHA.3` which changes the consumer API by decoupling subscribing from consuming.
 - **v0.4.3**, *15 Feb 2017*
     - Locked this version to `0.7.0-ALPHA.2` of node-rdkafka which broke BC in `0.7.0-ALPHA.3`.
 - **v0.4.2**, *15 Feb 2017*

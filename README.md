@@ -118,7 +118,8 @@ kafkaAvro.getConsumer({
   // the "getConsumer()" method will return a bluebird promise.
   .then(function(consumer) {
     var topicName = 'test';
-    this.consumer.consume([topicName]);
+    this.consumer.subscribe([topicName]);
+    this.consumer.consume();
     this.consumer.on('data', function(rawData) {
       console.log('data:', rawData);
     });

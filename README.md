@@ -244,6 +244,8 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 
 ## Release History
 
+- **v0.5.1**, *15 Feb 2017*
+    - Catch errors from `connect()` callbacks for both Consumer and Producer.
 - **v0.5.0**, *15 Feb 2017*
     - Upgrade to node-rdkafka `0.7.0-ALPHA.3` which changes the consumer API by decoupling subscribing from consuming.
 - **v0.4.3**, *15 Feb 2017*

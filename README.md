@@ -104,10 +104,11 @@ What kafka-avro basically does is wrap around node-rdkafka and intercept the pro
 
 > NOTICE: You need to initialize kafka-avro before you can produce or consume messages.
 
-By inoking the `kafkaAvro.getConsumer()` method, kafka-avro will instantiate a Consumer, make it connect and wait for it to be ready before the promise is resolved.
-
+By invoking the `kafkaAvro.getConsumer()` method, kafka-avro will instantiate a Consumer, listen on log, error and disconnect events and return it to you. Depending on the consuming pattern you follow you may or may not need to perform a `connect()`.
 
 #### Consumer using events to consume
+
+When consuming topics using the `data` event you will need to perform a `connect()` as per node-rdkafka documentation:
 
 ```js
 kafkaAvro.getConsumer({
@@ -117,6 +118,22 @@ kafkaAvro.getConsumer({
 })
   // the "getConsumer()" method will return a bluebird promise.
   .then(function(consumer) {
+    // Perform a consumer.connect()
+    return new Promise(function (resolve, reject) {
+      consumer.on('ready', function() {
+        resolve(consumer);
+      });
+
+      consumer.connect({}, function(err) {
+        if (err) {
+          reject(err);
+          return;
+        }
+      resolve(consumer); // depend on Promises' single resolve contract.
+    });
+  })
+  .then(function() {
+    // Subscribe and consume.
     var topicName = 'test';
     this.consumer.subscribe([topicName]);
     this.consumer.consume();
@@ -179,7 +196,10 @@ The KafkaAvro instance also provides the following methods:
 
 ### Logging
 
-The Kafka Avro library logs messages using the [Bunyan logger](https://github.com/trentm/node-bunyan/).
+The Kafka Avro library logs messages using the [Bunyan logger](https://github.com/trentm/node-bunyan/). To enable logging you will have to define at least one of the needed ENV variables:
+
+* `KAFKA_AVRO_LOG_LEVEL` Set it a valid Bunyan log level value to activate console logging (Typically you'd need either `info` or `debug` as values.)
+* `KAFKA_AVRO_LOG_NO_COLORS` Set this to any value to disable color when logging.
 
 
 #### KafkaAvro.getLogger()

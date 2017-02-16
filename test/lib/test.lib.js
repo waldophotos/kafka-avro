@@ -3,9 +3,12 @@
  */
 var axios = require('axios');
 var Promise = require('bluebird');
-const bunyan = require('bunyan');
+var bunyan = require('bunyan');
 
-const fmt = require('bunyan-format');
+var fmt = require('bunyan-format');
+
+// override to enable logging
+process.env.KAFKA_AVRO_LOG_LEVEL = 'debug';
 
 var KafkaAvro = require('../..');
 
@@ -22,7 +25,6 @@ testLib.log = bunyan.createLogger({
     levelInString: true,
   }),
 });
-
 
 testLib.KAFKA_SCHEMA_REGISTRY_URL = 'http://localhost:8081';
 testLib.KAFKA_BROKER_URL = 'localhost:9092';

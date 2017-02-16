@@ -129,7 +129,8 @@ kafkaAvro.getConsumer({
           reject(err);
           return;
         }
-      resolve(consumer); // depend on Promises' single resolve contract.
+        resolve(consumer); // depend on Promises' single resolve contract.
+      });
     });
   })
   .then(function() {

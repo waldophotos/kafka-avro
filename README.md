@@ -264,6 +264,9 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 
 ## Release History
 
+- **v0.6.0**, *16 Feb 2017*
+    - **Breaking change**: Consumers will no longer auto-connect, you are required to perform the `connect()` method manually, check the docs.
+    - Refactored logging, you can now enable it using an env var, check docs on Logging.
 - **v0.5.1**, *15 Feb 2017*
     - Catch errors from `connect()` callbacks for both Consumer and Producer.
 - **v0.5.0**, *15 Feb 2017*

@@ -170,6 +170,7 @@ describe('Consume', function() {
       }.bind(this));
 
       setTimeout(() => {
+        testLib.log.info('Producing on non SR topic...');
         produceTime = Date.now();
         this.producer.produce(producerTopic, -1, message, 'key');
       }, 4000);

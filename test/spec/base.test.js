@@ -5,9 +5,8 @@ const chai = require('chai');
 const expect = chai.expect;
 const sinon = require('sinon');
 
-const KafkaAvro = require('../..');
-
 const testLib = require('../lib/test.lib');
+const KafkaAvro = require('../..');
 
 describe('Base API Surface', function() {
   testLib.init();

@@ -4,12 +4,14 @@
 var chai = require('chai');
 var expect = chai.expect;
 
+const testLib = require('../lib/test.lib');
 var KafkaAvro = require('../..');
 
 // var srUrl = 'http://schema-registry-confluent.internal.dev.waldo.photos';
 var srUrl = 'http://localhost:8081';
 
 describe('Initialization of SR', function() {
+  testLib.init();
   it('should initialize properly', function() {
     var kafkaAvro = new KafkaAvro({
       schemaRegistry: srUrl,

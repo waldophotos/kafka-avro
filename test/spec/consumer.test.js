@@ -3,6 +3,7 @@
  */
 var crypto = require('crypto');
 
+var Promise = require('bluebird');
 var chai = require('chai');
 var expect = chai.expect;
 
@@ -28,9 +29,6 @@ describe('Consume', function() {
       .then(function (consumer) {
         testLib.log.info('beforeEach 1 on Consume: Got consumer');
         this.consumer = consumer;
-        this.consumer.on('error', function(err) {
-          testLib.log.info('consumerError:', err);
-        });
       });
   });
 
@@ -81,6 +79,26 @@ describe('Consume', function() {
   });
 
   describe('Consumer direct "on"', function() {
+
+    beforeEach(function() {
+      return new Promise(function (resolve, reject) {
+        this.consumer.on('ready', function() {
+          testLib.log.debug('getConsumer() :: Got "ready" event.');
+          resolve();
+        });
+
+        this.consumer.connect({}, function(err) {
+          if (err) {
+            testLib.log.error('getConsumer() :: Connect failed:', err);
+            reject(err);
+            return;
+          }
+          testLib.log.debug('getConsumer() :: Got "connect()" callback.');
+          resolve(); // depend on Promises' single resolve contract.
+        });
+      }.bind(this));
+    });
+
     it('should produce and consume a message using consume "on"', function(done) {
       var produceTime = 0;
 
@@ -152,6 +170,7 @@ describe('Consume', function() {
       }.bind(this));
 
       setTimeout(() => {
+        testLib.log.info('Producing on non SR topic...');
         produceTime = Date.now();
         this.producer.produce(producerTopic, -1, message, 'key');
       }, 4000);

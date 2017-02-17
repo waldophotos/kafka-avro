@@ -265,6 +265,8 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 
 ## Release History
 
+- **v0.6.1**, *17 Feb 2017*
+    - Don't log consumer log messages (logger, not kafka).
 - **v0.6.0**, *16 Feb 2017*
     - **Breaking change**: Consumers will no longer auto-connect, you are required to perform the `connect()` method manually, check the docs.
     - Refactored logging, you can now enable it using an env var, check docs on Logging.

@@ -265,6 +265,8 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 
 ## Release History
 
+- **v0.6.3**, *20 Feb 2017*
+    - Will now pass topic options on getConsumer and getProducer methods.
 - **v0.6.2**, *18 Feb 2017*
     - Fixed Magic Byte encoding for large payloads.
 - **v0.6.1**, *17 Feb 2017*

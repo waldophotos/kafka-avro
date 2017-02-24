@@ -5,19 +5,17 @@ var chai = require('chai');
 var expect = chai.expect;
 
 const testLib = require('../lib/test.lib');
-var KafkaAvro = require('../..');
+var SchemaRegistry = require('../../lib/schema-registry');
 
-// var srUrl = 'http://schema-registry-confluent.internal.dev.waldo.photos';
-var srUrl = 'http://localhost:8081';
+var srUrl = 'http://schema-registry-confluent.internal.dev.waldo.photos';
+// var srUrl = 'http://localhost:8081';
 
 describe('Initialization of SR', function() {
   testLib.init();
   it('should initialize properly', function() {
-    var kafkaAvro = new KafkaAvro({
-      schemaRegistry: srUrl,
-    });
+    var sr = new SchemaRegistry(srUrl);
 
-    return kafkaAvro.init()
+    return sr.init()
       .map((res) => {
         expect(res).to.have.keys([
           'responseRaw',
@@ -39,18 +37,16 @@ describe('Initialization of SR', function() {
         expect(all).to.have.length.of.at.least(1);
       });
   });
-  it('kafkaAvro instance should contain expected values after init', function() {
-    var kafkaAvro = new KafkaAvro({
-      schemaRegistry: srUrl,
-    });
+  it('SR instance should contain expected values after init', function() {
+    var sr = new SchemaRegistry(srUrl);
 
-    return kafkaAvro.init()
+    return sr.init()
       .map((res) => {
         if (res.schemaType.toLowerCase() === 'value') {
-          expect(kafkaAvro.valueSchemas[res.topic]).to.be.an('object');
-          expect(kafkaAvro.schemaMeta[res.topic]).to.be.an('object');
+          expect(sr.valueSchemas[res.topic]).to.be.an('object');
+          expect(sr.schemaMeta[res.topic]).to.be.an('object');
 
-          expect(kafkaAvro.schemaMeta[res.topic]).to.have.keys([
+          expect(sr.schemaMeta[res.topic]).to.have.keys([
             'subject',
             'version',
             'id',
@@ -58,7 +54,7 @@ describe('Initialization of SR', function() {
           ]);
 
         } else {
-          expect(kafkaAvro.keySchemas[res.topic]).to.be.an('object');
+          expect(sr.keySchemas[res.topic]).to.be.an('object');
         }
       })
       .then((all) => {

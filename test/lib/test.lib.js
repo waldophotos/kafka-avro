@@ -27,6 +27,7 @@ testLib.log = bunyan.createLogger({
 });
 
 testLib.KAFKA_SCHEMA_REGISTRY_URL = 'http://localhost:8081';
+// testLib.KAFKA_SCHEMA_REGISTRY_URL = 'http://schema-registry-confluent.internal.dev.waldo.photos';
 testLib.KAFKA_BROKER_URL = 'localhost:9092';
 
 testLib.topic = schemaFix.name;
@@ -76,9 +77,9 @@ testLib.init = function() {
       .then(() => {
         testLib.log.info('test.beforeEach 2: kafkaAvro.init() done!');
         this.kafkaAvro = kafkaAvro;
+        this.sr = kafkaAvro.sr;
       });
   });
-
 };
 
 /**

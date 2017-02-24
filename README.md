@@ -192,6 +192,7 @@ kafka-avro intercepts all incoming messages and augments the object with one mor
 * `offset` **Number** The Kafka offset.
 * `partition` **Number** The kafka partion used.
 * `parsed` **Object** The avro deserialized message as a JS Object ltieral.
+* `schemaId` **Number** The Registry Schema id of the consumed message.
 
 The KafkaAvro instance also provides the following methods:
 

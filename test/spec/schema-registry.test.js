@@ -7,8 +7,8 @@ var expect = chai.expect;
 const testLib = require('../lib/test.lib');
 var SchemaRegistry = require('../../lib/schema-registry');
 
-var srUrl = 'http://schema-registry-confluent.internal.dev.waldo.photos';
-// var srUrl = 'http://localhost:8081';
+// var srUrl = 'http://schema-registry-confluent.internal.dev.waldo.photos';
+var srUrl = 'http://localhost:8081';
 
 describe('Initialization of SR', function() {
   testLib.init();

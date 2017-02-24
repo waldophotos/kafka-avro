@@ -22,4 +22,23 @@ describe('Magic Byte', function() {
 
     magicByte.toMessageBuffer(message, type, 109);
   });
+
+  it('should extract schemaId from encoded message', function() {
+    var message = {
+      name: new Array(40).join('0'),
+      long: 540,
+    };
+
+    var schemaId = 109;
+
+    var type = avro.parse(schemaFix, {wrapUnions: true});
+
+    var encoded = magicByte.toMessageBuffer(message, type, schemaId);
+
+    var decoded = magicByte.fromMessageBuffer(type, encoded, this.sr);
+
+    expect(decoded.value.name).to.equal(message.name);
+    expect(decoded.value.long).to.equal(message.long);
+    expect(decoded.schemaId).to.equal(schemaId);
+  });
 });

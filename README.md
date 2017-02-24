@@ -192,6 +192,7 @@ kafka-avro intercepts all incoming messages and augments the object with one mor
 * `offset` **Number** The Kafka offset.
 * `partition` **Number** The kafka partion used.
 * `parsed` **Object** The avro deserialized message as a JS Object ltieral.
+* `schemaId` **Number** The Registry Schema id of the consumed message.
 
 The KafkaAvro instance also provides the following methods:
 
@@ -265,6 +266,9 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 
 ## Release History
 
+- **v0.7.0**, *24 Feb 2017*
+    - New mechanism in deserializing messages, the schema id will now be parsed from the message and if this schema id is found in the local registry kafka-avro will use that schema to deserialize. If it is not found then it will use the provided schema type, which would be the last known for the topic.
+    - Added `schemaId` property on the consumed messages.
 - **v0.6.4**, *23 Feb 2017*
     - Catch errors thrown by the deserializer.
 - **v0.6.3**, *20 Feb 2017*

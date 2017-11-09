@@ -269,7 +269,7 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 ## Release History
 
 - **v0.8.0-beta.1**, *09 Nov 2017*
-    - Provides option to fetch all past versions of a topic (thank you [CMTegner](https://github.com/CMTegner).
+    - Provides option to fetch all past versions of a topic (thank you [CMTegner](https://github.com/CMTegner)).
     - Provides option to select which topics should be fetched.
 - **v0.7.0**, *24 Feb 2017*
     - New mechanism in deserializing messages, the schema id will now be parsed from the message and if this schema id is found in the local registry kafka-avro will use that schema to deserialize. If it is not found then it will use the provided schema type, which would be the last known for the topic.

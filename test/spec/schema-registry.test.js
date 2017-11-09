@@ -21,7 +21,6 @@ describe('Initialization of SR', function() {
           'responseRaw',
           'schemaType',
           'topic',
-          'schemaRaw',
           'schemaTopicRaw',
           'type',
         ]);

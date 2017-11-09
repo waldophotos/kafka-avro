@@ -18,6 +18,7 @@ describe('Initialization of SR', function() {
     return sr.init()
       .map((res) => {
         expect(res).to.have.keys([
+          'version',
           'responseRaw',
           'schemaType',
           'topic',
@@ -42,6 +43,7 @@ describe('Initialization of SR', function() {
     return sr.init()
       .map((res) => {
         if (res.schemaType.toLowerCase() === 'value') {
+          expect(sr.schemaTypeById['schema-' + res.responseRaw.id]).to.be.an('object');
           expect(sr.valueSchemas[res.topic]).to.be.an('object');
           expect(sr.schemaMeta[res.topic]).to.be.an('object');
 

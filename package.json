@@ -1,6 +1,6 @@
 {
   "name": "kafka-avro",
-  "version": "0.8.0-beta.2",
+  "version": "0.8.0-beta.3",
   "main": "./lib/kafka-avro",
   "description": "Node.js bindings for librdkafka with Avro schema serialization.",
   "homepage": "https://github.com/waldophotos/kafka-avro",

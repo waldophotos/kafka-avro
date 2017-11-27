@@ -268,7 +268,7 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 
 ## Release History
 
-- **v0.8.0-beta.1**, *09 Nov 2017*
+- **v0.8.0**, *27 Nov 2017*
     - Provides option to fetch all past versions of a topic (thank you [CMTegner](https://github.com/CMTegner)).
     - Provides option to select which topics should be fetched.
 - **v0.7.0**, *24 Feb 2017*

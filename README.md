@@ -62,6 +62,7 @@ When instantiating kafka-avro you may pass the following options:
 * `schemaRegistry` **String REQUIRED** The url to the Schema Registry.
 * `topics` **Array of Strings** You may optionally define specific topics to be fetched by kafka-avro vs fetching schemas for all the topics which is the default behavior.
 * `fetchAllVersions` **Boolean** Set to true to fetch all versions for each topic, use it when updating of schemas is often in your environment.
+* `parseOptions` **Object** Schema parse options to pass to `avro.parse()`. `parseOptions.wrapUnions` is set to `true` by default.
 
 ### Producer
 

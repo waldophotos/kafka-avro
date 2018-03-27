@@ -43,7 +43,7 @@ var KafkaAvro = require('kafka-avro');
 
 var kafkaAvro = new KafkaAvro({
     kafkaBroker: 'localhost:9092',
-    schemaRegistry: 'localhost:8081',
+    schemaRegistry: 'http://localhost:8081',
 });
 
 // Query the Schema Registry for all topic-schema's
@@ -136,12 +136,12 @@ kafkaAvro.getConsumer({
       });
     });
   })
-  .then(function() {
+  .then(function(consumer) {
     // Subscribe and consume.
     var topicName = 'test';
-    this.consumer.subscribe([topicName]);
-    this.consumer.consume();
-    this.consumer.on('data', function(rawData) {
+    consumer.subscribe([topicName]);
+    consumer.consume();
+    consumer.on('data', function(rawData) {
       console.log('data:', rawData);
     });
   });

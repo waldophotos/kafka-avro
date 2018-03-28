@@ -269,6 +269,8 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 
 ## Release History
 
+- **1.0.0.**, *28 Mar 2018*
+    - Updating docs and the libs avsc and node-rdkafka (thank you [ricardohbin](https://github.com/ricardohbin))
 - **v0.8.1**, *01 Feb 2018*
     - Allow customization of AVSC parse options (thank you [dapetcu21](https://github.com/dapetcu21)).
 - **v0.8.0**, *27 Nov 2017*

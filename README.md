@@ -140,38 +140,6 @@ kafkaAvro.getConsumer({
   });
 ```
 
-#### Consumer using streams to consume
-
-```js
-kafkaAvro.getConsumer({
-  'group.id': 'librd-test',
-  'socket.keepalive.enable': true,
-  'enable.auto.commit': true,
-})
-    // the "getConsumer()" method will return a bluebird promise.
-    .then(function(consumer) {
-        // Topic Name can be a string, or an array of strings
-        var topicName = 'test';
-
-        var stream = consumer.getReadStream(topicName, {
-          waitInterval: 0
-        });
-
-        stream.on('error', function() {
-          process.exit(1);
-        });
-
-        consumer.on('error', function(err) {
-          console.log(err);
-          process.exit(1);
-        });
-
-        stream.on('data', function(message) {
-            console.log('Received message:', message);
-        });
-    });
-```
-
 Same deal here, thin wrapper around node-rdkafka and deserialize incoming messages before they reach your consuming method.
 
 * [node-rdkafka Consumer Tutorial](https://blizzard.github.io/node-rdkafka/current/tutorial-consumer.html)

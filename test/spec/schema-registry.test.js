@@ -37,7 +37,7 @@ describe('Initialization of SR', function() {
       });
   });
   it('SR instance should contain expected values after init', function() {
-    var sr = new SchemaRegistry({ schemaRegistryUrl: srUrl, fetchAllVersions: true });
+    var sr = new SchemaRegistry({ schemaRegistryUrl: srUrl });
 
     return sr.init()
       .map((res) => {

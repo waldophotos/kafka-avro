@@ -29,10 +29,7 @@ describe('Produce', function() {
           this.gotReceipt = true;
         }.bind(this));
 
-        this.producerTopic = producer.Topic(testLib.topic, {
-          // Make the Kafka broker acknowledge our message (optional)
-          'request.required.acks': 1,
-        });
+        this.topicName = testLib.topic;
       }.bind(this));
   });
   afterEach(function(done) {
@@ -46,7 +43,8 @@ describe('Produce', function() {
       name: 'Thanasis',
       long: 540,
     };
-    this.producer.produce(this.producerTopic, -1, message, 'key');
+
+    this.producer.produce(this.topicName, -1, message, 'key');
 
     //need to keep polling for a while to ensure the delivery reports are received
     var pollLoop = setInterval(() => {
@@ -63,7 +61,7 @@ describe('Produce', function() {
       long: '540',
     };
 
-    var binded = this.producer.produce.bind(this.producer, this.producerTopic,
+    var binded = this.producer.produce.bind(this.producer, this.topicName,
       -1, message, 'key');
 
     expect(binded).to.throw(Error);
@@ -73,7 +71,7 @@ describe('Produce', function() {
       name: 'Thanasis',
     };
 
-    var binded = this.producer.produce.bind(this.producer, this.producerTopic, -1, message, 'key');
+    var binded = this.producer.produce.bind(this.producer, this.topicName, -1, message, 'key');
 
     expect(binded).to.throw(Error);
   });

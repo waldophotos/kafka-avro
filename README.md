@@ -82,19 +82,12 @@ kafkaAvro.getProducer({
           console.log('producer disconnected. ' + JSON.stringify(arg));
         });
 
-        //Create a Topic object with any options our Producer
-        //should use when producing to that topic.
-        var topic = producer.Topic(topicName, {
-        // Make the Kafka broker acknowledge our message (optional)
-        'request.required.acks': 1
-        });
-
         var value = new Buffer('value-' +i);
         var key = 'key';
 
         // if partition is set to -1, librdkafka will use the default partitioner
         var partition = -1;
-        producer.produce(topic, partition, value, key);
+        producer.produce(topicName, partition, value, key);
     })
 ```
 

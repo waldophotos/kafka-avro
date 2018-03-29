@@ -141,8 +141,35 @@ kafkaAvro.getConsumer({
 ```
 
 #### Consumer using streams to consume
+```js
+kafkaAvro.getConsumerStream({
+  'group.id': 'librd-test',
+  'socket.keepalive.enable': true,
+  'enable.auto.commit': true,
+}, {
+  'topics': 'test'
+})
+  .then(function(stream) {
+      stream.on('error', function(err) {
+        if (err) console.log(err);
+        process.exit(1);
+      });
 
-The current version doesn't supports stream (working in progress). If you need this feature, use the version `0.8.1` - https://github.com/waldophotos/kafka-avro/tree/v0.8.1
+      stream.on('data', function (rawData) {
+          console.log('data:', rawData)
+      });
+
+      stream.on('error', function(err) {
+        console.log(err);
+        process.exit(1);
+      });
+
+      stream.consumer.on('event.error', function(err) {
+        console.log(err);
+      })
+  });
+```
+
 
 Same deal here, thin wrapper around node-rdkafka and deserialize incoming messages before they reach your consuming method.
 

@@ -140,6 +140,10 @@ kafkaAvro.getConsumer({
   });
 ```
 
+#### Consumer using streams to consume
+
+The current version doesn't supports stream (working in progress). If you need this feature, use the version `0.8.1` - https://github.com/waldophotos/kafka-avro/tree/v0.8.1
+
 Same deal here, thin wrapper around node-rdkafka and deserialize incoming messages before they reach your consuming method.
 
 * [node-rdkafka Consumer Tutorial](https://blizzard.github.io/node-rdkafka/current/tutorial-consumer.html)

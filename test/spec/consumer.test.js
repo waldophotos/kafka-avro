@@ -226,7 +226,7 @@ describe('Consume', function() {
         long: 540,
       };
 
-      this.kafkaAvro.getConsumerStream(this.consOpts, { topics: [ testLib.topic, testLib.topicTwo ] })
+      this.kafkaAvro.getConsumerStream(this.consOpts, { 'enable.auto.commit': true }, { topics: [ testLib.topic, testLib.topicTwo ] })
         .then(function (consumerStream) {
           consumerStream.on('error', noop);
 
@@ -263,7 +263,7 @@ describe('Consume', function() {
         long: 540,
       };
 
-      this.kafkaAvro.getConsumerStream(this.consOpts, { topics: topicName })
+      this.kafkaAvro.getConsumerStream(this.consOpts, { 'enable.auto.commit': true }, { topics: topicName })
         .then(function (consumerStream) {
           consumerStream.on('error', noop);
 

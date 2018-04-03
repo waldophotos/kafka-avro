@@ -141,12 +141,17 @@ kafkaAvro.getConsumer({
 ```
 
 #### Consumer using streams to consume
+
 ```js
 kafkaAvro.getConsumerStream({
   'group.id': 'librd-test',
   'socket.keepalive.enable': true,
   'enable.auto.commit': true,
-}, {
+},
+{
+  'request.required.acks': 1
+},
+{
   'topics': 'test'
 })
   .then(function(stream) {

@@ -35,7 +35,11 @@ describe('Magic Byte', function() {
 
     var encoded = magicByte.toMessageBuffer(message, type, schemaId);
 
-    var decoded = magicByte.fromMessageBuffer(type, encoded, this.sr);
+    var decoded = magicByte.fromMessageBuffer(type, encoded, {
+      schemaTypeById: {
+        schemaId: schemaId
+      }
+    });
 
     expect(decoded.value.name).to.equal(message.name);
     expect(decoded.value.long).to.equal(message.long);

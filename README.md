@@ -82,19 +82,12 @@ kafkaAvro.getProducer({
           console.log('producer disconnected. ' + JSON.stringify(arg));
         });
 
-        //Create a Topic object with any options our Producer
-        //should use when producing to that topic.
-        var topic = producer.Topic(topicName, {
-        // Make the Kafka broker acknowledge our message (optional)
-        'request.required.acks': 1
-        });
-
         var value = new Buffer('value-' +i);
         var key = 'key';
 
         // if partition is set to -1, librdkafka will use the default partitioner
         var partition = -1;
-        producer.produce(topic, partition, value, key);
+        producer.produce(topicName, partition, value, key);
     })
 ```
 
@@ -150,34 +143,38 @@ kafkaAvro.getConsumer({
 #### Consumer using streams to consume
 
 ```js
-kafkaAvro.getConsumer({
+kafkaAvro.getConsumerStream({
   'group.id': 'librd-test',
   'socket.keepalive.enable': true,
   'enable.auto.commit': true,
+},
+{
+  'request.required.acks': 1
+},
+{
+  'topics': 'test'
 })
-    // the "getConsumer()" method will return a bluebird promise.
-    .then(function(consumer) {
-        // Topic Name can be a string, or an array of strings
-        var topicName = 'test';
+  .then(function(stream) {
+      stream.on('error', function(err) {
+        if (err) console.log(err);
+        process.exit(1);
+      });
 
-        var stream = consumer.getReadStream(topicName, {
-          waitInterval: 0
-        });
+      stream.on('data', function (rawData) {
+          console.log('data:', rawData)
+      });
 
-        stream.on('error', function() {
-          process.exit(1);
-        });
+      stream.on('error', function(err) {
+        console.log(err);
+        process.exit(1);
+      });
 
-        consumer.on('error', function(err) {
-          console.log(err);
-          process.exit(1);
-        });
-
-        stream.on('data', function(message) {
-            console.log('Received message:', message);
-        });
-    });
+      stream.consumer.on('event.error', function(err) {
+        console.log(err);
+      })
+  });
 ```
+
 
 Same deal here, thin wrapper around node-rdkafka and deserialize incoming messages before they reach your consuming method.
 
@@ -269,7 +266,9 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 
 ## Release History
 
-- **1.0.0.**, *28 Mar 2018*
+- **1.0.1**, *03 Apr 2018*
+    - **Breaking change**: New consumer stream API, changes in producer and fixing all integration tests thank you [ricardohbin](https://github.com/ricardohbin))
+- **1.0.0**, *28 Mar 2018*
     - Updating docs and the libs avsc (v5.2.3) and node-rdkafka (v2.1.3) (thank you [ricardohbin](https://github.com/ricardohbin))
 - **v0.8.1**, *01 Feb 2018*
     - Allow customization of AVSC parse options (thank you [dapetcu21](https://github.com/dapetcu21)).

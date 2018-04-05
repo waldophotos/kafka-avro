@@ -57,14 +57,6 @@ describe('Consume', function() {
           this.gotReceipt = true;
         }.bind(this));
 
-        this.producerTopic = producer.Topic(testLib.topic, {
-          // Make the Kafka broker acknowledge our message (optional)
-          'request.required.acks': 1,
-        });
-        this.producerTopicTwo = producer.Topic(testLib.topicTwo, {
-          // Make the Kafka broker acknowledge our message (optional)
-          'request.required.acks': 1,
-        });
         testLib.log.info('beforeEach 2 on Consume: Done');
 
       });
@@ -127,7 +119,7 @@ describe('Consume', function() {
 
       setTimeout(() => {
         produceTime = Date.now();
-        this.producer.produce(this.producerTopic, -1, message, 'key');
+        this.producer.produce(testLib.topic, -1, message, 'key');
       }, 4000);
 
       // //need to keep polling for a while to ensure the delivery reports are received
@@ -144,7 +136,6 @@ describe('Consume', function() {
       var produceTime = 0;
 
       var topicName = 'testKafkaAvro' + crypto.randomBytes(20).toString('hex');
-      var producerTopic = this.producer.Topic(topicName, {});
 
       var message = {
         name: 'Thanasis',
@@ -172,7 +163,7 @@ describe('Consume', function() {
       setTimeout(() => {
         testLib.log.info('Producing on non SR topic...');
         produceTime = Date.now();
-        this.producer.produce(producerTopic, -1, message, 'key');
+        this.producer.produce(topicName, -1, message, 'key');
       }, 4000);
     });
 
@@ -218,77 +209,47 @@ describe('Consume', function() {
 
       setTimeout(() => {
         produceTime = Date.now();
-        this.producer.produce(this.producerTopicTwo, -1, message, 'key');
-        this.producer.produce(this.producerTopic, -1, message, 'key');
+        this.producer.produce(testLib.topicTwo, -1, message, 'key');
+        this.producer.produce(testLib.topic, -1, message, 'key');
       }, 2000);
     });
   });
 
   describe('Consume using Streams', function() {
-    it('should produce and consume a message using streams', function(done) {
-      var produceTime = 0;
-
-      var message = {
-        name: 'Thanasis',
-        long: 540,
-      };
-
-      var stream = this.consumer.getReadStream(testLib.topic, {
-        waitInterval: 0
-      });
-      stream.on('error', noop);
-
-      stream.on('data', function(dataRaw) {
-        var data = dataRaw.parsed;
-        var diff = Date.now() - produceTime;
-        testLib.log.info('Produce to consume time in ms:', diff);
-        expect(data).to.have.keys([
-          'name',
-          'long',
-        ]);
-
-        expect(data.name).to.equal(message.name);
-        expect(data.long).to.equal(message.long);
-
-        done();
-      }.bind(this));
-
-      setTimeout(() => {
-        produceTime = Date.now();
-        this.producer.produce(this.producerTopic, -1, message, 'key');
-      }, 2000);
-    });
     it('should produce and consume a message using streams on two topics', function(done) {
       var produceTime = 0;
 
+      var isDone = false;
+
       var message = {
         name: 'Thanasis',
         long: 540,
       };
 
-      var stream = this.consumer.getReadStream([testLib.topic, testLib.topicTwo], {
-        waitInterval: 0
+      this.kafkaAvro.getConsumerStream(this.consOpts, { 'enable.auto.commit': true }, { topics: [ testLib.topic, testLib.topicTwo ] })
+        .then(function (consumerStream) {
+          consumerStream.on('error', noop);
+
+          consumerStream.on('data', function(dataRaw) {
+            var data = dataRaw.parsed;
+            var diff = Date.now() - produceTime;
+            testLib.log.info('Produce to consume time in ms:', diff);
+            expect(data).to.have.keys([
+              'name',
+              'long',
+            ]);
+
+            expect(data.name).to.equal(message.name);
+            expect(data.long).to.equal(message.long);
+            if (!isDone) done();
+            isDone = true;
+        });
       });
-      stream.on('error', noop);
-
-      stream.on('data', function(dataRaw) {
-        var data = dataRaw.parsed;
-        var diff = Date.now() - produceTime;
-        testLib.log.info('Produce to consume time in ms:', diff);
-        expect(data).to.have.keys([
-          'name',
-          'long',
-        ]);
-
-        expect(data.name).to.equal(message.name);
-        expect(data.long).to.equal(message.long);
-
-        done();
-      }.bind(this));
 
       setTimeout(() => {
         produceTime = Date.now();
-        this.producer.produce(this.producerTopic, -1, message, 'key');
+        this.producer.produce(testLib.topicTwo, -1, message, 'key');
+        this.producer.produce(testLib.topic, -1, message, 'key');
       }, 2000);
     });
 
@@ -296,38 +257,36 @@ describe('Consume', function() {
       var produceTime = 0;
 
       var topicName = 'testKafkaAvro' + crypto.randomBytes(20).toString('hex');
-      var producerTopic = this.producer.Topic(topicName, {});
 
       var message = {
         name: 'Thanasis',
         long: 540,
       };
 
-      var stream = this.consumer.getReadStream(topicName, {
-        waitInterval: 0
+      this.kafkaAvro.getConsumerStream(this.consOpts, { 'enable.auto.commit': true }, { topics: topicName })
+        .then(function (consumerStream) {
+          consumerStream.on('error', noop);
+
+          consumerStream.on('data', function(dataRaw) {
+            var data = dataRaw.parsed;
+            var diff = Date.now() - produceTime;
+            testLib.log.info('Produce to consume time in ms:', diff);
+            expect(data).to.have.keys([
+              'name',
+              'long',
+            ]);
+
+            expect(data.name).to.equal(message.name);
+            expect(data.long).to.equal(message.long);
+
+            done();
+          });
       });
-      stream.on('error', noop);
-
-      stream.on('data', function(dataRaw) {
-        var data = dataRaw.parsed;
-        var diff = Date.now() - produceTime;
-        testLib.log.info('Produce to consume time in ms:', diff);
-        expect(data).to.have.keys([
-          'name',
-          'long',
-        ]);
-
-        expect(data.name).to.equal(message.name);
-        expect(data.long).to.equal(message.long);
-
-        done();
-      }.bind(this));
 
       setTimeout(() => {
         produceTime = Date.now();
-        this.producer.produce(producerTopic, -1, message, 'key');
+        this.producer.produce(topicName, -1, message, 'key');
       }, 2000);
     });
-
   });
 });

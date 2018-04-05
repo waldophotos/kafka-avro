@@ -14,6 +14,8 @@ var KafkaAvro = require('../..');
 
 var schemaFix = require('../fixtures/schema.fix');
 
+var schemaTwoFix = require('../fixtures/schema-two.fix');
+
 var testLib = module.exports = {};
 
 testLib.log = bunyan.createLogger({
@@ -31,7 +33,7 @@ testLib.KAFKA_SCHEMA_REGISTRY_URL = 'http://localhost:8081';
 testLib.KAFKA_BROKER_URL = 'localhost:9092';
 
 testLib.topic = schemaFix.name;
-testLib.topicTwo = schemaFix.name + 'Two';
+testLib.topicTwo = schemaTwoFix.name;
 
 var testBoot = false;
 
@@ -61,7 +63,7 @@ testLib.init = function() {
 
     return Promise.all([
       testLib.registerSchema(testLib.topic, schemaFix),
-      testLib.registerSchema(testLib.topicTwo, schemaFix),
+      testLib.registerSchema(testLib.topicTwo, schemaTwoFix),
     ]);
   });
 

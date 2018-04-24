@@ -9,9 +9,10 @@
     "name": "Thanasis Polychronakis",
     "email": "thanpolas@gmail.com"
   },
-  "contributors": [
-    ""
-  ],
+  "contributors": [{
+    "name": "Ricardo Bin",
+    "email": "ricardohbin@gmail.com"
+  }],
   "repository": {
     "type": "git",
     "url": "https://github.com/waldophotos/kafka-avro"

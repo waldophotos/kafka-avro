@@ -16,11 +16,8 @@ describe('Consume', function() {
 
   beforeEach(function() {
     this.consOpts = {
-      // 'debug': 'all',
       'group.id': 'testKafkaAvro' + crypto.randomBytes(20).toString('hex'),
       'enable.auto.commit': true,
-      // 'auto.offset.reset': 'earliest',
-      // 'session.timeout.ms': 1000,
     };
 
     testLib.log.info('beforeEach 1 on Consume');
@@ -121,15 +118,6 @@ describe('Consume', function() {
         produceTime = Date.now();
         this.producer.produce(testLib.topic, -1, message, 'key');
       }, 4000);
-
-      // //need to keep polling for a while to ensure the delivery reports are received
-      // var pollLoop = setInterval(function () {
-      //   this.producer.poll();
-      //   if (this.gotReceipt) {
-      //     clearInterval(pollLoop);
-      //     this.producer.disconnect();
-      //   }
-      // }.bind(this), 1000);
     });
 
     it('should produce and consume a message using consume "on", on a non Schema Registry topic', function(done) {
@@ -211,7 +199,7 @@ describe('Consume', function() {
         produceTime = Date.now();
         this.producer.produce(testLib.topicTwo, -1, message, 'key');
         this.producer.produce(testLib.topic, -1, message, 'key');
-      }, 2000);
+      }, 4000);
     });
   });
 
@@ -250,7 +238,7 @@ describe('Consume', function() {
         produceTime = Date.now();
         this.producer.produce(testLib.topicTwo, -1, message, 'key');
         this.producer.produce(testLib.topic, -1, message, 'key');
-      }, 2000);
+      }, 4000);
     });
 
     it('should produce and consume a message using streams on a not SR topic', function(done) {
@@ -286,7 +274,7 @@ describe('Consume', function() {
       setTimeout(() => {
         produceTime = Date.now();
         this.producer.produce(topicName, -1, message, 'key');
-      }, 2000);
+      }, 4000);
     });
   });
 });

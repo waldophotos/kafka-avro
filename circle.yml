@@ -6,6 +6,8 @@ machine:
     - docker
   node:
     version: 8.2.0
+  hosts:
+    kafka: 127.0.0.1
 
 dependencies:
   pre:

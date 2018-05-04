@@ -21,7 +21,6 @@ var testLib = module.exports = {};
 testLib.log = bunyan.createLogger({
   name: 'KafkaAvroTest',
   level: 'trace',
-  // stream: {write: function() {}},
   stream: fmt({
     outputMode: 'long',
     levelInString: true,
@@ -29,8 +28,7 @@ testLib.log = bunyan.createLogger({
 });
 
 testLib.KAFKA_SCHEMA_REGISTRY_URL = 'http://localhost:8081';
-// testLib.KAFKA_SCHEMA_REGISTRY_URL = 'http://schema-registry-confluent.internal.dev.waldo.photos';
-testLib.KAFKA_BROKER_URL = 'localhost:9092';
+testLib.KAFKA_BROKER_URL = 'kafka:9092';
 
 testLib.topic = schemaFix.name;
 testLib.topicTwo = schemaTwoFix.name;

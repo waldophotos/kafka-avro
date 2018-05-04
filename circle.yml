@@ -1,4 +1,6 @@
 machine:
+  pre:
+   - pip install docker-compose
   services:
     - docker
   node:

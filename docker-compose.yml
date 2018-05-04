@@ -5,6 +5,7 @@ services:
     image: landoop/fast-data-dev
     environment:
       ADV_HOST: kafka
+    network_mode: host
     ports:
       - 2181:2181
       - 3030:3030

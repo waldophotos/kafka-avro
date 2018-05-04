@@ -8,6 +8,6 @@ machine:
 
 dependencies:
   pre:
-    - docker run --rm -it --net=host landoop/fast-data-dev
+    - docker-compose up -d
     - sudo apt-get update;
     - sudo apt-get -y install libsasl2-dev libssl-dev

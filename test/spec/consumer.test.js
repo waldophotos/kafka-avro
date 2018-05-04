@@ -102,7 +102,7 @@ describe('Consume', function() {
         produceTime = Date.now();
         this.producer.produce(testLib.topicTwo, -1, message, 'key');
         this.producer.produce(testLib.topic, -1, message, 'key');
-      }, 4000);
+      }, 5000);
     });
 
     it('should produce and consume a message using streams on a not SR topic', function(done) {
@@ -138,7 +138,7 @@ describe('Consume', function() {
       setTimeout(() => {
         produceTime = Date.now();
         this.producer.produce(topicName, -1, message, 'key');
-      }, 4000);
+      }, 5000);
     });
   });
 });

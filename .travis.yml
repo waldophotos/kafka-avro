@@ -2,7 +2,7 @@ dist: trusty
 language: node_js
 sudo: required
 node_js:
-  - '6.9'
+  - '8.2.0'
 services:
   - docker
 cache:
@@ -12,6 +12,6 @@ addons:
   hosts:
     - kafka
 before_install:
-  - docker-compose up -d
   - sudo apt-get update -qq
-  - sudo apt-get -y install libsasl2-dev
+  - sudo apt-get -y install libsasl2-dev libssl-dev
+  - docker-compose up -d

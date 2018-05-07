@@ -206,12 +206,12 @@ describe('Consume', function() {
     it('should produce and consume a message using streams on two topics', function(done) {
       var produceTime = 0;
 
-      var isDone = false;
-
       var message = {
         name: 'Thanasis',
         long: 540,
       };
+
+      var isDone = false;
 
       this.kafkaAvro.getConsumerStream(this.consOpts, { 'enable.auto.commit': true }, { topics: [ testLib.topic, testLib.topicTwo ] })
         .then(function (consumerStream) {
@@ -228,7 +228,10 @@ describe('Consume', function() {
 
             expect(data.name).to.equal(message.name);
             expect(data.long).to.equal(message.long);
-            if (!isDone) done();
+            if (!isDone) {
+              consumerStream.consumer.disconnect();
+              done();
+            }
             isDone = true;
         });
       });
@@ -265,7 +268,7 @@ describe('Consume', function() {
 
             expect(data.name).to.equal(message.name);
             expect(data.long).to.equal(message.long);
-
+            consumerStream.consumer.disconnect();
             done();
           });
       });

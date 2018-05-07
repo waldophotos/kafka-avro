@@ -32,7 +32,6 @@ describe('Consume', function() {
   beforeEach(function() {
     testLib.log.info('beforeEach 2 on Consume');
     return this.kafkaAvro.getProducer({
-      // 'debug': 'all',
       'dr_cb': true,
     })
       .bind(this)
@@ -65,6 +64,142 @@ describe('Consume', function() {
       .then(function() {
         testLib.log.info('afterEach 1 on Consume: Disposed');
       });
+  });
+
+  describe('Consumer direct "on"', function() {
+
+    beforeEach(function() {
+      return new Promise(function (resolve, reject) {
+        this.consumer.on('ready', function() {
+          testLib.log.debug('getConsumer() :: Got "ready" event.');
+          resolve();
+        });
+
+        this.consumer.connect({}, function(err) {
+          if (err) {
+            testLib.log.error('getConsumer() :: Connect failed:', err);
+            reject(err);
+            return;
+          }
+          testLib.log.debug('getConsumer() :: Got "connect()" callback.');
+          resolve(); // depend on Promises' single resolve contract.
+        });
+      }.bind(this));
+    });
+
+    it('should produce and consume a message using consume "on"', function(done) {
+      var produceTime = 0;
+
+      var message = {
+        name: 'Thanasis',
+        long: 540,
+      };
+
+      // //start consuming messages
+      this.consumer.subscribe([testLib.topic]);
+      this.consumer.consume();
+
+      this.consumer.on('data', function(rawData) {
+        var data = rawData.parsed;
+        var diff = Date.now() - produceTime;
+        testLib.log.info('Produce to consume time in ms:', diff);
+        expect(data).to.have.keys([
+          'name',
+          'long',
+        ]);
+        expect(data.name).to.equal(message.name);
+        expect(data.long).to.equal(message.long);
+
+        done();
+      }.bind(this));
+
+      setTimeout(() => {
+        produceTime = Date.now();
+        this.producer.produce(testLib.topic, -1, message, 'key');
+      }, 10000);
+    });
+
+    it('should produce and consume a message using consume "on", on a non Schema Registry topic', function(done) {
+      var produceTime = 0;
+
+      var topicName = 'testKafkaAvro' + crypto.randomBytes(20).toString('hex');
+
+      var message = {
+        name: 'Thanasis',
+        long: 540,
+      };
+
+      // //start consuming messages
+      this.consumer.subscribe([topicName]);
+      this.consumer.consume();
+
+      this.consumer.on('data', function(rawData) {
+        var data = rawData.parsed;
+        var diff = Date.now() - produceTime;
+        testLib.log.info('Produce to consume time in ms:', diff);
+        expect(data).to.have.keys([
+          'name',
+          'long',
+        ]);
+        expect(data.name).to.equal(message.name);
+        expect(data.long).to.equal(message.long);
+
+        done();
+      }.bind(this));
+
+      setTimeout(() => {
+        testLib.log.info('Producing on non SR topic...');
+        produceTime = Date.now();
+        this.producer.produce(topicName, -1, message, 'key');
+      }, 10000);
+    });
+
+    it('should produce and consume on two topics using a single consumer', function(done) {
+      var produceTime = 0;
+
+      var message = {
+        name: 'Thanasis',
+        long: 540,
+      };
+
+      // //start consuming messages
+      this.consumer.subscribe([
+        testLib.topic,
+        testLib.topicTwo,
+      ]);
+      this.consumer.consume();
+
+      var receivedOne = false;
+      var receivedTwo = false;
+
+      this.consumer.on('data', function(rawData) {
+        if (rawData.topic === testLib.topic) {
+          receivedOne = true;
+        } else {
+          receivedTwo = true;
+        }
+
+        var data = rawData.parsed;
+        var diff = Date.now() - produceTime;
+        testLib.log.info('Produce to consume time in ms:', diff);
+        expect(data).to.have.keys([
+          'name',
+          'long',
+        ]);
+        expect(data.name).to.equal(message.name);
+        expect(data.long).to.equal(message.long);
+
+        if (receivedOne && receivedTwo) {
+          done();
+        }
+      }.bind(this));
+
+      setTimeout(() => {
+        produceTime = Date.now();
+        this.producer.produce(testLib.topicTwo, -1, message, 'key');
+        this.producer.produce(testLib.topic, -1, message, 'key');
+      }, 10000);
+    });
   });
 
   describe('Consume using Streams', function() {
@@ -102,7 +237,7 @@ describe('Consume', function() {
         produceTime = Date.now();
         this.producer.produce(testLib.topicTwo, -1, message, 'key');
         this.producer.produce(testLib.topic, -1, message, 'key');
-      }, 5000);
+      }, 10000);
     });
 
     it('should produce and consume a message using streams on a not SR topic', function(done) {
@@ -138,7 +273,7 @@ describe('Consume', function() {
       setTimeout(() => {
         produceTime = Date.now();
         this.producer.produce(topicName, -1, message, 'key');
-      }, 5000);
+      }, 10000);
     });
   });
 });

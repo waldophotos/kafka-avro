@@ -16,11 +16,8 @@ describe('Consume', function() {
 
   beforeEach(function() {
     this.consOpts = {
-      // 'debug': 'all',
       'group.id': 'testKafkaAvro' + crypto.randomBytes(20).toString('hex'),
       'enable.auto.commit': true,
-      // 'auto.offset.reset': 'earliest',
-      // 'session.timeout.ms': 1000,
     };
 
     testLib.log.info('beforeEach 1 on Consume');
@@ -35,7 +32,6 @@ describe('Consume', function() {
   beforeEach(function() {
     testLib.log.info('beforeEach 2 on Consume');
     return this.kafkaAvro.getProducer({
-      // 'debug': 'all',
       'dr_cb': true,
     })
       .bind(this)
@@ -120,16 +116,7 @@ describe('Consume', function() {
       setTimeout(() => {
         produceTime = Date.now();
         this.producer.produce(testLib.topic, -1, message, 'key');
-      }, 4000);
-
-      // //need to keep polling for a while to ensure the delivery reports are received
-      // var pollLoop = setInterval(function () {
-      //   this.producer.poll();
-      //   if (this.gotReceipt) {
-      //     clearInterval(pollLoop);
-      //     this.producer.disconnect();
-      //   }
-      // }.bind(this), 1000);
+      }, 10000);
     });
 
     it('should produce and consume a message using consume "on", on a non Schema Registry topic', function(done) {
@@ -164,7 +151,7 @@ describe('Consume', function() {
         testLib.log.info('Producing on non SR topic...');
         produceTime = Date.now();
         this.producer.produce(topicName, -1, message, 'key');
-      }, 4000);
+      }, 10000);
     });
 
     it('should produce and consume on two topics using a single consumer', function(done) {
@@ -211,7 +198,7 @@ describe('Consume', function() {
         produceTime = Date.now();
         this.producer.produce(testLib.topicTwo, -1, message, 'key');
         this.producer.produce(testLib.topic, -1, message, 'key');
-      }, 2000);
+      }, 10000);
     });
   });
 
@@ -219,12 +206,12 @@ describe('Consume', function() {
     it('should produce and consume a message using streams on two topics', function(done) {
       var produceTime = 0;
 
-      var isDone = false;
-
       var message = {
         name: 'Thanasis',
         long: 540,
       };
+
+      var isDone = false;
 
       this.kafkaAvro.getConsumerStream(this.consOpts, { 'enable.auto.commit': true }, { topics: [ testLib.topic, testLib.topicTwo ] })
         .then(function (consumerStream) {
@@ -241,7 +228,10 @@ describe('Consume', function() {
 
             expect(data.name).to.equal(message.name);
             expect(data.long).to.equal(message.long);
-            if (!isDone) done();
+            if (!isDone) {
+              consumerStream.consumer.disconnect();
+              done();
+            }
             isDone = true;
         });
       });
@@ -250,7 +240,7 @@ describe('Consume', function() {
         produceTime = Date.now();
         this.producer.produce(testLib.topicTwo, -1, message, 'key');
         this.producer.produce(testLib.topic, -1, message, 'key');
-      }, 2000);
+      }, 10000);
     });
 
     it('should produce and consume a message using streams on a not SR topic', function(done) {
@@ -278,7 +268,7 @@ describe('Consume', function() {
 
             expect(data.name).to.equal(message.name);
             expect(data.long).to.equal(message.long);
-
+            consumerStream.consumer.disconnect();
             done();
           });
       });
@@ -286,7 +276,7 @@ describe('Consume', function() {
       setTimeout(() => {
         produceTime = Date.now();
         this.producer.produce(topicName, -1, message, 'key');
-      }, 2000);
+      }, 10000);
     });
   });
 });

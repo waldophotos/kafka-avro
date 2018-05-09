@@ -254,7 +254,12 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 
 ## Testing
 
-[Use the kafka-avro-stub library](https://github.com/waldophotos/kafka-avro-stub) to avoid requiring Kafka and Schema Registry to run on your local for testing your service.
+You can use `docker-compose up` to up all the stack before you call your integration tests with `npm test`. How the integration tests are outside the containers, you will need set you `hosts` file to :
+
+```
+127.0.0.1 kafka
+```
+
 
 ## Releasing
 

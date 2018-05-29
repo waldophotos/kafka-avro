@@ -63,6 +63,7 @@ When instantiating kafka-avro you may pass the following options:
 * `topics` **Array of Strings** You may optionally define specific topics to be fetched by kafka-avro vs fetching schemas for all the topics which is the default behavior.
 * `fetchAllVersions` **Boolean** Set to true to fetch all versions for each topic, use it when updating of schemas is often in your environment.
 * `parseOptions` **Object** Schema parse options to pass to `avro.parse()`. `parseOptions.wrapUnions` is set to `true` by default.
+* `httpsAgent` **Object** initialized [https Agent class](https://nodejs.org/api/https.html#https_class_https_agent)
 
 ### Producer
 
@@ -271,8 +272,10 @@ You can use `docker-compose up` to up all the stack before you call your integra
 
 ## Release History
 
+- **1.0.3**, *28 May 2018*
+    - Added support for providing configured https.Agent to support schema-registry using private certificates. (by [scottchapman](https://github.com/scottchapman))
 - **1.0.2**, *23 Apr 2018*
-    - Using URL module instead of strings to resolve schema registry urls.(by [ricardohbin](https://github.com/ricardohbin))
+    - Using URL module instead of strings to resolve schema registry urls. (by [ricardohbin](https://github.com/ricardohbin))
 - **1.0.1**, *03 Apr 2018*
     - **Breaking change**: New consumer stream API, changes in producer and fixing all integration tests (by [ricardohbin](https://github.com/ricardohbin)).
 - **1.0.0**, *28 Mar 2018*

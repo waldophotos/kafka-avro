@@ -272,6 +272,8 @@ You can use `docker-compose up` to up all the stack before you call your integra
 
 ## Release History
 
+- **1.0.4**, *30 May 2018*
+    - Allowing schema-registry urls with paths (by [941design](https://github.com/941design))
 - **1.0.3**, *28 May 2018*
     - Added support for providing configured https.Agent to support schema-registry using private certificates. (by [scottchapman](https://github.com/scottchapman))
 - **1.0.2**, *23 Apr 2018*

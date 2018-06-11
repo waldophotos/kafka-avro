@@ -39,7 +39,7 @@ var testBoot = false;
  * Require from all test scripts, prepares kafka for testing.
  *
  */
-testLib.init = function() {
+testLib.init = function(readerSchemas) {
   beforeEach(function() {
     if (testBoot) {
       return;
@@ -69,6 +69,7 @@ testLib.init = function() {
     let kafkaAvro = new KafkaAvro({
       kafkaBroker: testLib.KAFKA_BROKER_URL,
       schemaRegistry: testLib.KAFKA_SCHEMA_REGISTRY_URL,
+      readerSchemaByTopic: readerSchemas
     });
 
     testLib.log.info('test.beforeEach 2: Invoking kafkaAvro.init()...');

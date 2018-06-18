@@ -119,6 +119,29 @@ describe('Consume', function() {
       }, 10000);
     });
 
+    it('should produce and consume a message using consume "on" with timestamp when provided', function(done) {
+      var produceTime = Date.parse('04 Dec 2015 00:12:00 GMT'); //use date in the past to guarantee we don't get Date.now()
+
+      var message = {
+        name: 'Thanasis',
+        long: 540,
+      };
+
+      // //start consuming messages
+      this.consumer.subscribe([testLib.topic]);
+      this.consumer.consume();
+
+      this.consumer.on('data', function(rawData) {
+        expect(rawData.timestamp).to.equal(produceTime);
+        done();
+      }.bind(this));
+
+      setTimeout(() => {
+        produceTime = Date.now();
+        this.producer.produce(testLib.topic, -1, message, 'key', produceTime);
+      }, 10000);
+    });
+
     it('should produce and consume a message using consume "on", on a non Schema Registry topic', function(done) {
       var produceTime = 0;
 

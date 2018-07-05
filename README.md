@@ -62,6 +62,7 @@ When instantiating kafka-avro you may pass the following options:
 * `schemaRegistry` **String REQUIRED** The url to the Schema Registry.
 * `topics` **Array of Strings** You may optionally define specific topics to be fetched by kafka-avro vs fetching schemas for all the topics which is the default behavior.
 * `fetchAllVersions` **Boolean** Set to true to fetch all versions for each topic, use it when updating of schemas is often in your environment.
+* `fetchRefreshRate` **Number** The pooling time (in seconds) to the schemas be fetched and updated in background. This is useful to keep with schemas changes in production. The default value is `0` seconds (disabled).
 * `parseOptions` **Object** Schema parse options to pass to `avro.parse()`. `parseOptions.wrapUnions` is set to `true` by default.
 * `httpsAgent` **Object** initialized [https Agent class](https://nodejs.org/api/https.html#https_class_https_agent)
 
@@ -272,6 +273,8 @@ You can use `docker-compose up` to up all the stack before you call your integra
 
 ## Release History
 
+- **1.0.6**, *06 July 2018*
+    - Adding the `fetchRefreshRate` parameter, to set a way to update the schemas after the app initialization. (by [ricardohbin](https://github.com/ricardohbin))
 - **1.0.5**, *27 June 2018*
     - Fixes kafka-producer to pass timestamp and opaque correctly (by [javierholguera](https://github.com/javierholguera))
 - **1.0.4**, *30 May 2018*

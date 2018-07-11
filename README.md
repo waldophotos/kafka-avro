@@ -273,7 +273,7 @@ You can use `docker-compose up` to up all the stack before you call your integra
 
 ## Release History
 
-- **1.0.6**, *06 July 2018*
+- **1.0.6**, *11 July 2018*
     - Adding the `fetchRefreshRate` parameter, to set a way to update the schemas after the app initialization. (by [ricardohbin](https://github.com/ricardohbin))
 - **1.0.5**, *27 June 2018*
     - Fixes kafka-producer to pass timestamp and opaque correctly (by [javierholguera](https://github.com/javierholguera))

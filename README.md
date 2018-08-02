@@ -84,7 +84,7 @@ kafkaAvro.getProducer({
           console.log('producer disconnected. ' + JSON.stringify(arg));
         });
 
-        var value = new Buffer('value-' +i);
+        var value = {name:'John'};
         var key = 'key';
 
         // if partition is set to -1, librdkafka will use the default partitioner

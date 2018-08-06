@@ -273,6 +273,8 @@ You can use `docker-compose up` to up all the stack before you call your integra
 
 ## Release History
 
+- **1.1.0**, *06 August 2018*
+    - Updating to node-rdkafka v2.3.4 (by [ricardohbin](https://github.com/ricardohbin))
 - **1.0.6**, *11 July 2018*
     - Adding the `fetchRefreshRate` parameter, to set a way to update the schemas after the app initialization. (by [ricardohbin](https://github.com/ricardohbin))
 - **1.0.5**, *27 June 2018*

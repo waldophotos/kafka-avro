@@ -43,8 +43,44 @@ describe('Produce', function() {
       name: 'Thanasis',
       long: 540,
     };
+    var key = 'key';
 
-    this.producer.produce(this.topicName, -1, message, 'key');
+    this.producer.on('delivery-report', function(err, report) {
+      expect(err).to.equal(null);
+      expect(Buffer.from(report.key).toString('utf8')).to.equal(key);
+      expect(report.opaque).to.equal(undefined);
+      this.gotReceipt = true;
+    });
+
+    this.producer.produce(this.topicName, -1, message, key);
+
+    //need to keep polling for a while to ensure the delivery reports are received
+    var pollLoop = setInterval(() => {
+      this.producer.poll();
+      if (this.gotReceipt) {
+        clearInterval(pollLoop);
+        done();
+      }
+    }, 1000);
+  });
+  it('should produce a message with an opaque value in delivery report', function(done) {
+    var message = {
+      name: 'Thanasis',
+      long: 540,
+    };
+
+    var key = 'key';
+
+    var eventTime = Date.now();
+    var opaqueRef = 'my-opaque-ref';
+
+    this.producer.on('delivery-report', function(err, report) {
+      expect(err).to.equal(null);
+      expect(report.opaque).to.equal(opaqueRef);
+      this.gotReceipt = true;
+    });
+
+    this.producer.produce(this.topicName, -1, message, key, eventTime, opaqueRef);
 
     //need to keep polling for a while to ensure the delivery reports are received
     var pollLoop = setInterval(() => {

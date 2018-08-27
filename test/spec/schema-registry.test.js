@@ -44,18 +44,16 @@ describe('Initialization of SR', function() {
         if (res.schemaType.toLowerCase() === 'value') {
           expect(sr.schemaTypeById['schema-' + res.responseRaw.id]).to.be.an('object');
           expect(sr.valueSchemas[res.topic]).to.be.an('object');
-          expect(sr.schemaMeta[res.topic]).to.be.an('object');
-
-          expect(sr.schemaMeta[res.topic]).to.have.keys([
-            'subject',
-            'version',
-            'id',
-            'schema',
-          ]);
-
         } else {
           expect(sr.keySchemas[res.topic]).to.be.an('object');
         }
+        expect(sr.schemaMeta[res.topic]).to.be.an('object');
+        expect(sr.schemaMeta[res.topic]).to.have.keys([
+          'subject',
+          'version',
+          'id',
+          'schema',
+        ]);
       })
       .then((all) => {
         expect(all).to.have.length.of.at.least(1);

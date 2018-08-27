@@ -273,6 +273,8 @@ You can use `docker-compose up` to up all the stack before you call your integra
 
 ## Release History
 
+- **1.1.1**, *23 August 2018*
+    - Set `schemaMeta` for key schemas also (by [eparreno](https://github.com/eparreno))
 - **1.1.0**, *06 August 2018*
     - Updating to node-rdkafka v2.3.4 (by [ricardohbin](https://github.com/ricardohbin))
 - **1.0.6**, *11 July 2018*

@@ -32,6 +32,7 @@ testLib.KAFKA_BROKER_URL = 'kafka:9092';
 
 testLib.topic = schemaFix.name;
 testLib.topicTwo = schemaTwoFix.name;
+testLib.topicThreeWithDuplicateSchema = schemaFix.name + '-duplicateSchema';
 
 var testBoot = false;
 
@@ -62,6 +63,7 @@ testLib.init = function() {
     return Promise.all([
       testLib.registerSchema(testLib.topic, schemaFix),
       testLib.registerSchema(testLib.topicTwo, schemaTwoFix),
+      testLib.registerSchema(testLib.topicThreeWithDuplicateSchema, schemaFix),
     ]);
   });
 

@@ -273,6 +273,8 @@ You can use `docker-compose up` to up all the stack before you call your integra
 
 ## Release History
 
+- **1.1.3**, *02 January 2019*
+    - Fixing broken `fetchAllVersions` feature (by [ricardohbin](https://github.com/ricardohbin))
 - **1.1.2**, *08 November 2018*
     - Handle topics which use identical schemas (by [scottwd9](https://github.com/scottwd9))
 - **1.1.1**, *23 August 2018*

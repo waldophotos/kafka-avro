@@ -16,6 +16,8 @@ var schemaFix = require('../fixtures/schema.fix');
 
 var schemaTwoFix = require('../fixtures/schema-two.fix');
 
+var keySchemaFix = require('../fixtures/key-schema.fix');
+
 var testLib = module.exports = {};
 
 testLib.log = bunyan.createLogger({
@@ -61,9 +63,13 @@ testLib.init = function() {
     this.timeout(180000); // wait up to 3' for the SR to come up
 
     return Promise.all([
-      testLib.registerSchema(testLib.topic, schemaFix),
-      testLib.registerSchema(testLib.topicTwo, schemaTwoFix),
-      testLib.registerSchema(testLib.topicThreeWithDuplicateSchema, schemaFix),
+      testLib.registerSchema(testLib.topic, schemaFix, 'value'),
+      testLib.registerSchema(testLib.topicTwo, schemaTwoFix, 'value'),
+      testLib.registerSchema(testLib.topicThreeWithDuplicateSchema, schemaFix, 'value'),
+
+      testLib.registerSchema(testLib.topic, keySchemaFix, 'key'),
+      testLib.registerSchema(testLib.topicTwo, keySchemaFix, 'key'),
+      testLib.registerSchema(testLib.topicThreeWithDuplicateSchema, keySchemaFix, 'key'),
     ]);
   });
 
@@ -92,9 +98,9 @@ testLib.init = function() {
  * @param {number=} retries how many times has retried.
  * @return {Promise} A Promise.
  */
-testLib.registerSchema = Promise.method(function(topic, schema, retries) {
+testLib.registerSchema = Promise.method(function(topic, schema, type, retries) {
   var schemaCreateUrl = testLib.KAFKA_SCHEMA_REGISTRY_URL +
-    '/subjects/' + topic + '-value/versions';
+    '/subjects/' + topic + '-' + type + '/versions';
 
   var data = {
     schema: JSON.stringify(schema),
@@ -117,7 +123,7 @@ testLib.registerSchema = Promise.method(function(topic, schema, retries) {
       retries++;
       return new Promise(function(resolve) {
         setTimeout(function() {
-          testLib.registerSchema(topic, schema, retries)
+          testLib.registerSchema(topic, schema, type, retries)
             .then(resolve);
         }, 1000);
       });

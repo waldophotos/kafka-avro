@@ -38,7 +38,7 @@ describe('Produce', function() {
     });
   });
 
-  it('should produce a message', function(done) {
+  it('should produce a message with serialized key', function(done) {
     var message = {
       name: 'Thanasis',
       long: 540,
@@ -46,8 +46,10 @@ describe('Produce', function() {
     var key = 'key';
 
     this.producer.on('delivery-report', function(err, report) {
+      var parsedKey = Buffer.from(report.key).slice(6); // MAGIC_BYTE(1) | SCHEMA_ID(4) | KEY
+
       expect(err).to.equal(null);
-      expect(Buffer.from(report.key).toString('utf8')).to.equal(key);
+      expect(parsedKey.toString('utf8')).to.equal(key);
       expect(report.opaque).to.equal(undefined);
       this.gotReceipt = true;
     });

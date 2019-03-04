@@ -95,27 +95,32 @@ describe('Consume', function() {
         long: 540,
       };
 
+      var key = 'test-key';
+
       // //start consuming messages
       this.consumer.subscribe([testLib.topic]);
       this.consumer.consume();
 
       this.consumer.on('data', function(rawData) {
-        var data = rawData.parsed;
+        var dataValue = rawData.parsed;
+        var dataKey = rawData.parsedKey;
         var diff = Date.now() - produceTime;
         testLib.log.info('Produce to consume time in ms:', diff);
-        expect(data).to.have.keys([
+        expect(dataValue).to.have.keys([
           'name',
           'long',
         ]);
-        expect(data.name).to.equal(message.name);
-        expect(data.long).to.equal(message.long);
+        expect(dataValue.name).to.equal(message.name);
+        expect(dataValue.long).to.equal(message.long);
+
+        expect(dataKey).to.equal(key);
 
         done();
       }.bind(this));
 
       setTimeout(() => {
         produceTime = Date.now();
-        this.producer.produce(testLib.topic, -1, message, 'key');
+        this.producer.produce(testLib.topic, -1, message, key);
       }, 10000);
     });
 
@@ -152,20 +157,25 @@ describe('Consume', function() {
         long: 540,
       };
 
+      var key = 'no-schema-key';
+
       // //start consuming messages
       this.consumer.subscribe([topicName]);
       this.consumer.consume();
 
       this.consumer.on('data', function(rawData) {
-        var data = rawData.parsed;
+        var dataValue = rawData.parsed;
+        var dataKey = rawData.parsedKey;
         var diff = Date.now() - produceTime;
         testLib.log.info('Produce to consume time in ms:', diff);
-        expect(data).to.have.keys([
+        expect(dataValue).to.have.keys([
           'name',
           'long',
         ]);
-        expect(data.name).to.equal(message.name);
-        expect(data.long).to.equal(message.long);
+        expect(dataValue.name).to.equal(message.name);
+        expect(dataValue.long).to.equal(message.long);
+
+        expect(dataKey).to.equal(key);
 
         done();
       }.bind(this));
@@ -173,7 +183,7 @@ describe('Consume', function() {
       setTimeout(() => {
         testLib.log.info('Producing on non SR topic...');
         produceTime = Date.now();
-        this.producer.produce(topicName, -1, message, 'key');
+        this.producer.produce(topicName, -1, message, key);
       }, 10000);
     });
 
@@ -184,6 +194,8 @@ describe('Consume', function() {
         name: 'Thanasis',
         long: 540,
       };
+
+      var key = 'two-topics';
 
       // //start consuming messages
       this.consumer.subscribe([
@@ -202,15 +214,17 @@ describe('Consume', function() {
           receivedTwo = true;
         }
 
-        var data = rawData.parsed;
+        var dataValue = rawData.parsed;
+        var dataKey = rawData.parsedKey;
         var diff = Date.now() - produceTime;
         testLib.log.info('Produce to consume time in ms:', diff);
-        expect(data).to.have.keys([
+        expect(dataValue).to.have.keys([
           'name',
           'long',
         ]);
-        expect(data.name).to.equal(message.name);
-        expect(data.long).to.equal(message.long);
+        expect(dataValue.name).to.equal(message.name);
+        expect(dataValue.long).to.equal(message.long);
+        expect(dataKey).to.equal(key);
 
         if (receivedOne && receivedTwo) {
           done();
@@ -219,8 +233,8 @@ describe('Consume', function() {
 
       setTimeout(() => {
         produceTime = Date.now();
-        this.producer.produce(testLib.topicTwo, -1, message, 'key');
-        this.producer.produce(testLib.topic, -1, message, 'key');
+        this.producer.produce(testLib.topicTwo, -1, message, key);
+        this.producer.produce(testLib.topic, -1, message, key);
       }, 10000);
     });
   });
@@ -234,35 +248,40 @@ describe('Consume', function() {
         long: 540,
       };
 
+      var key = 'key-stream';
+
       var isDone = false;
 
       this.kafkaAvro.getConsumerStream(this.consOpts, { 'enable.auto.commit': true }, { topics: [ testLib.topic, testLib.topicTwo ] })
-        .then(function (consumerStream) {
-          consumerStream.on('error', noop);
+      .then(function (consumerStream) {
+        consumerStream.on('error', noop);
 
-          consumerStream.on('data', function(dataRaw) {
-            var data = dataRaw.parsed;
-            var diff = Date.now() - produceTime;
-            testLib.log.info('Produce to consume time in ms:', diff);
-            expect(data).to.have.keys([
-              'name',
-              'long',
-            ]);
+        consumerStream.on('data', function(dataRaw) {
+          var dataValue = dataRaw.parsed;
+          var dataKey = dataRaw.parsedKey;
+          var diff = Date.now() - produceTime;
+          testLib.log.info('Produce to consume time in ms:', diff);
+          expect(dataValue).to.have.keys([
+            'name',
+            'long',
+          ]);
 
-            expect(data.name).to.equal(message.name);
-            expect(data.long).to.equal(message.long);
-            if (!isDone) {
-              consumerStream.consumer.disconnect();
-              done();
-            }
-            isDone = true;
+          expect(dataValue.name).to.equal(message.name);
+          expect(dataValue.long).to.equal(message.long);
+          expect(dataKey).to.equal(key);
+
+          if (!isDone) {
+            consumerStream.consumer.disconnect();
+            done();
+          }
+          isDone = true;
         });
       });
 
       setTimeout(() => {
         produceTime = Date.now();
-        this.producer.produce(testLib.topicTwo, -1, message, 'key');
-        this.producer.produce(testLib.topic, -1, message, 'key');
+        this.producer.produce(testLib.topicTwo, -1, message, key);
+        this.producer.produce(testLib.topic, -1, message, key);
       }, 10000);
     });
 
@@ -276,29 +295,35 @@ describe('Consume', function() {
         long: 540,
       };
 
+      var key = 'not-sr-key';
+
       this.kafkaAvro.getConsumerStream(this.consOpts, { 'enable.auto.commit': true }, { topics: topicName })
         .then(function (consumerStream) {
           consumerStream.on('error', noop);
 
           consumerStream.on('data', function(dataRaw) {
-            var data = dataRaw.parsed;
+            var dataValue = dataRaw.parsed;
+            var dataKey = dataRaw.parsedKey;
             var diff = Date.now() - produceTime;
             testLib.log.info('Produce to consume time in ms:', diff);
-            expect(data).to.have.keys([
+            expect(dataValue).to.have.keys([
               'name',
               'long',
             ]);
 
-            expect(data.name).to.equal(message.name);
-            expect(data.long).to.equal(message.long);
+            expect(dataValue.name).to.equal(message.name);
+            expect(dataValue.long).to.equal(message.long);
+
+            expect(dataKey).to.equal(key);
+
             consumerStream.consumer.disconnect();
             done();
           });
-      });
+        });
 
       setTimeout(() => {
         produceTime = Date.now();
-        this.producer.produce(topicName, -1, message, 'key');
+        this.producer.produce(topicName, -1, message, key);
       }, 10000);
     });
   });

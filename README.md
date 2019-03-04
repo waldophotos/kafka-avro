@@ -185,7 +185,7 @@ Same deal here, thin wrapper around node-rdkafka and deserialize incoming messag
 
 #### Consumer Data Object
 
-kafka-avro intercepts all incoming messages and augments the object with one more property named `parsed` which contained the avro deserialized object. Here is a breakdown of the properties included in the `message` object you receive when consuming messages:
+kafka-avro intercepts all incoming messages and augments the object with two more properties named `parsed` and `parsedKey`, which contained the avro deserialized object's value and key. Here is a breakdown of the properties included in the `message` object you receive when consuming messages:
 
 * `value` **Buffer** The raw message buffer from Kafka.
 * `size` **Number** The size of the message.
@@ -193,8 +193,10 @@ kafka-avro intercepts all incoming messages and augments the object with one mor
 * `topic` **String** The topic this message comes from.
 * `offset` **Number** The Kafka offset.
 * `partition` **Number** The kafka partion used.
-* `parsed` **Object** The avro deserialized message as a JS Object ltieral.
-* `schemaId` **Number** The Registry Schema id of the consumed message.
+* `parsed` **Object** The avro deserialized value as a JS Object ltieral.
+* `schemaId` **Number** The Registry Value Schema id of the consumed message.
+* `parsedKey` **Object** The avro deserialized key as a JS Object ltieral.
+* `schemaIdKey` **Number** The Registry Key Schema id of the consumed message.
 
 The KafkaAvro instance also provides the following methods:
 
@@ -272,7 +274,9 @@ You can use `docker-compose up` to up all the stack before you call your integra
     * `grunt release:major` for major number jump.
 
 ## Release History
-
+- **1.2.0**, *03 March 2019*
+    - Fixed cases when both key and value schemas were available, but the value was being serialized using the key schema (by [macabu](https://github.com/macabu))
+    - Support for (de)serialization of keys. Added `parsedKey` and `schemaIdKey` to the consumer data object (by [macabu](https://github.com/macabu))
 - **1.1.4**, *27 February 2019*
     - Adding clearInterval on periodic schema update, when dispose() called (by [mbieser](https://github.com/mbieser))
 - **1.1.3**, *02 January 2019*

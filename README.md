@@ -274,6 +274,8 @@ You can use `docker-compose up` to up all the stack before you call your integra
     * `grunt release:major` for major number jump.
 
 ## Release History
+- **2.0.0**, *04 September 2019*
+    - **Breaking change** Update version of node-rdkafka to ~v2.7.1 - this version uses `librdkafka` v1.1.0
 - **1.2.0**, *03 March 2019*
     - Fixed cases when both key and value schemas were available, but the value was being serialized using the key schema (by [macabu](https://github.com/macabu))
     - Support for (de)serialization of keys. Added `parsedKey` and `schemaIdKey` to the consumer data object (by [macabu](https://github.com/macabu))

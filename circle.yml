@@ -18,6 +18,11 @@ jobs:
           name: Start kafka and schema-registry
           command: docker-compose up -d
       - run:
+        name: verify if we can install nodejs using apt-get
+        command: |
+          sudo apt-get update
+          apt list -a nodejs
+      - run:
           name: Install node@8.16
           command: |
             set +e
@@ -30,7 +35,7 @@ jobs:
             echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
             echo "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\"" >> $BASH_ENV
       run:
-        name: Install node@8.16
+        name: verify if nodejs was installed
         command: |
           node -v
           npm -v

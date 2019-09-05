@@ -21,6 +21,9 @@ jobs:
           paths:
             - node_modules
       - run:
+          name: Install libreries requierd to build node-librdkafka
+          command: 'sudo apt-get update && sudo apt-get -y install libsasl2-dev libssl-dev'
+      - run:
           name: Install projects dependencies
           command: 'npm install'
   test:

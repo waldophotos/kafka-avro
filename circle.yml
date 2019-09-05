@@ -15,7 +15,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Start kafka and schema-registry
-          command: docker-compose up -d
+          command: docker-compose up -d --project-name kafka-avro
       - run:
           name: Update npm
           command: 'sudo npm install -g npm@6.10'
@@ -42,7 +42,7 @@ jobs:
           command: sleep 30
       - run:
           name: Test
-          command: npm test
+          command: npm run-script coverage
       - run:
           name: Generate code coverage
           command: './node_modules/.bin/nyc report --reporter=text-lcov'

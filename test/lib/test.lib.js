@@ -123,7 +123,8 @@ testLib.registerSchema = Promise.method(function (topic, schema, type, retries) 
       retries++;
 
       if (retries > 20) {
-        process.exit();
+        // process.exit();
+        throw new Error('Environment has not started correctly');
       }
 
       return new Promise(function (resolve) {

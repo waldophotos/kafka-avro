@@ -2,7 +2,7 @@
 
 > Node.js bindings for librdkafka with Avro schema serialization.
 
-[![CircleCI](https://circleci.com/gh/waldophotos/kafka-avro/tree/master.svg?style=svg)](https://circleci.com/gh/waldophotos/kafka-avro/tree/master)
+[![CircleCI](https://circleci.com/gh/pleszczy/workflows/kafka-avro/tree/master.svg?style=svg)](https://circleci.com/gh/pleszczy/workflows/kafka-avro/tree/master)
 
 The kafka-avro library is a wrapper that combines the [node-rdkafka][node-rdkafka] and [avsc][avsc] libraries to allow for Production and Consumption of messages on kafka validated and serialized by Avro.
 

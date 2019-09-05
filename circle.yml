@@ -1,11 +1,11 @@
 version: 2
-  jobs:
-    build:
-      docker:
-          - image: circleci/node
-      steps:
-        - docker-compose up -d
-        - sudo apt-get update;
-        - sudo apt-get -y install libsasl2-dev libssl-dev
-        - checkout
-        - run: npm test
+jobs:
+  build:
+    docker:
+        - image: circleci/node
+    steps:
+      - docker-compose up -d
+      - sudo apt-get update;
+      - sudo apt-get -y install libsasl2-dev libssl-dev
+      - checkout
+      - run: npm test

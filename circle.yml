@@ -13,7 +13,7 @@ jobs:
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
       - run:
           name: Update npm
-          command: 'sudo npm install -g npm@latest'
+          command: 'sudo npm install -g npm@6.1.0'
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - save_cache:

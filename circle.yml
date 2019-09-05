@@ -18,10 +18,10 @@ jobs:
           name: Start kafka and schema-registry
           command: docker-compose up -d
       - run:
-        name: verify if we can install nodejs using apt-get
-        command: |
-          sudo apt-get update
-          apt list -a nodejs
+          name: verify if we can install nodejs using apt-get
+          command: |
+            sudo apt-get update
+            apt list -a nodejs
       - run:
           name: Install node@8.16
           command: |

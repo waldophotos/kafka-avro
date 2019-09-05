@@ -20,11 +20,14 @@ jobs:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
+      - run:
+          name: Install projects dependencies
+          command: 'npm install'
   test:
     docker:
       - image: circleci/node
     steps:
-      - checkout
+#      - checkout
       - setup_remote_docker
       - run:
           name: Start kafka and schema-registry

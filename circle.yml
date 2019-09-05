@@ -12,10 +12,6 @@ jobs:
             chmod +x ~/docker-compose
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
       - run:
-          name: Verify docker-compose was installed
-          command: 'docker-compose --version'
-      - setup_remote_docker
-      - run:
           name: Update npm
           command: 'sudo npm install -g npm@latest'
       - restore_cache:
@@ -29,6 +25,7 @@ jobs:
       - image: circleci/node
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: Start kafka and schema-registry
           command: docker-compose up -d
@@ -45,16 +42,10 @@ jobs:
           path: coverage
           prefix: coverage
       - run: npm test
-  verifyWorkflowIsWorking:
-    docker:
-      - image: circleci/node
-    steps:
-      - run: echo "workflows are enabled"
 workflows:
   version: 2
   build_and_test:
     jobs:
-      - verifyWorkflowIsWorking
       - build
       - test:
           requires:

@@ -49,11 +49,12 @@ jobs:
       - image: circleci/node
     steps:
       - run: echo "workflows are enabled"
-  workflows:
-    version: 2
-    build_and_test:
-      jobs:
-        - build
-        - test:
-            requires:
-              - build
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - verifyWorkflowIsWorking
+      - build
+      - test:
+          requires:
+            - build

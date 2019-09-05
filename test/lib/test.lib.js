@@ -121,6 +121,11 @@ testLib.registerSchema = Promise.method(function (topic, schema, type, retries) 
     .catch(function (err) {
       testLib.log.error({err}, 'Axios SR creation failed after noOfRetries', {noOfRetries: retries});
       retries++;
+
+      if (retries > 30) {
+        process.exit();
+      }
+
       return new Promise(function (resolve) {
         setTimeout(function () {
           testLib.registerSchema(topic, schema, type, retries)

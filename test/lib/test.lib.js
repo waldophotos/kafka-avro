@@ -29,7 +29,7 @@ testLib.log = bunyan.createLogger({
   }),
 });
 
-testLib.KAFKA_SCHEMA_REGISTRY_URL = 'http://localhost:8081';
+testLib.KAFKA_SCHEMA_REGISTRY_URL = 'http://schema-registry:8081';
 testLib.KAFKA_BROKER_URL = 'kafka:9092';
 
 testLib.topic = schemaFix.name;

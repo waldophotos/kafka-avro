@@ -1,5 +1,7 @@
 version: 2
 jobs:
+  hosts:
+    kafka: 127.0.0.1
   build:
     working_directory: ~/kafka-avro
     docker:
@@ -31,6 +33,9 @@ jobs:
       - run:
           name: Start kafka and schema-registry
           command: docker-compose up -d
+      - run:
+          name: Add hostnames for kafka
+          command: echo 127.0.0.1 kafka | sudo tee -a /etc/hosts && echo 127.0.0.1 schema-registry | sudo tee -a /etc/hosts && echo 127.0.0.1 zookeeper | sudo tee -a /etc/hosts
       - run:
           name: Test
           command: npm test

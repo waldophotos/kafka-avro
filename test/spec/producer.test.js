@@ -6,46 +6,46 @@ const expect = chai.expect;
 
 const testLib = require('../lib/test.lib');
 
-describe('Produce', function() {
+describe('Produce', function () {
   testLib.init();
 
-  beforeEach(function() {
+  beforeEach(function () {
     return this.kafkaAvro.getProducer({
       'dr_cb': true,
     })
       .then(function (producer) {
         this.producer = producer;
 
-        producer.on('event.log', function(log) {
+        producer.on('event.log', function (log) {
           testLib.log.info('producer log:', log);
         });
 
         //logging all errors
-        producer.on('error', function(err) {
+        producer.on('error', function (err) {
           testLib.log.error('Error from producer:', err);
         });
 
-        producer.on('delivery-report', function() {
+        producer.on('delivery-report', function () {
           this.gotReceipt = true;
         }.bind(this));
 
         this.topicName = testLib.topic;
       }.bind(this));
   });
-  afterEach(function(done) {
-    this.producer.disconnect(function(err) {
+  afterEach(function (done) {
+    this.producer.disconnect(function (err) {
       done(err);
     });
   });
 
-  it('should produce a message with serialized key', function(done) {
+  it('should produce a message with serialized key', function (done) {
     const message = {
       name: 'Thanasis',
       long: 540,
     };
     const key = 'key';
     const that = this;
-    this.producer.on('delivery-report', function(err, report) {
+    this.producer.on('delivery-report', function (err, report) {
       const schemaId = report.key.readInt32BE(1);
       const schemaType = that.sr.schemaTypeById[('schema-' + schemaId)];
       const parsedKey = schemaType.decode(report.key, 5).value;
@@ -67,7 +67,7 @@ describe('Produce', function() {
       }
     }, 1000);
   });
-  it('should produce a message with an opaque value in delivery report', function(done) {
+  it('should produce a message with an opaque value in delivery report', function (done) {
     const message = {
       name: 'Thanasis',
       long: 540,
@@ -77,7 +77,7 @@ describe('Produce', function() {
     const eventTime = Date.now();
     const opaqueRef = 'my-opaque-ref';
 
-    this.producer.on('delivery-report', function(err, report) {
+    this.producer.on('delivery-report', function (err, report) {
       expect(err).to.equal(null);
       expect(report.opaque).to.equal(opaqueRef);
       this.gotReceipt = true;
@@ -94,7 +94,7 @@ describe('Produce', function() {
       }
     }, 1000);
   });
-  it('should not allow invalid type', function() {
+  it('should not allow invalid type', function () {
     const message = {
       name: 'Thanasis',
       long: '540',
@@ -105,14 +105,14 @@ describe('Produce', function() {
 
     expect(binded).to.throw(Error);
   });
-  it('should not allow less attributes', function() {
+  it('should not allow less attributes', function () {
     const message = {
       name: 'Thanasis',
     };
 
-    const binded = this.producer.produce.bind(this.producer, this.topicName, -1, message, 'key');
+    const banded = this.producer.produce.bind(this.producer, this.topicName, -1, message, 'key');
 
-    expect(binded).to.throw(Error);
+    expect(banded).to.throw(Error);
   });
 
 });

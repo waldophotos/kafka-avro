@@ -31,7 +31,7 @@ You are highly encouraged to read the ["node-rdkafka" documentation](https://bli
 The `Kafka.CODES` enumeration of constant values provided by the "node-rdkafka" library is also available as a static var at:
 
 ```js
-var KafkaAvro = require('kafka-avro');
+const KafkaAvro = require('kafka-avro');
 
 console.log(KafkaAvro.CODES);
 ```
@@ -39,9 +39,9 @@ console.log(KafkaAvro.CODES);
 ### Initialize kafka-avro
 
 ```js
-var KafkaAvro = require('kafka-avro');
+const KafkaAvro = require('kafka-avro');
 
-var kafkaAvro = new KafkaAvro({
+const kafkaAvro = new KafkaAvro({
     kafkaBroker: 'localhost:9092',
     schemaRegistry: 'http://localhost:8081',
 });
@@ -78,17 +78,17 @@ kafkaAvro.getProducer({
 })
     // "getProducer()" returns a Bluebird Promise.
     .then(function(producer) {
-        var topicName = 'test';
+        const topicName = 'test';
 
         producer.on('disconnected', function(arg) {
           console.log('producer disconnected. ' + JSON.stringify(arg));
         });
 
-        var value = {name:'John'};
-        var key = 'key';
+        const value = {name:'John'};
+        const key = 'key';
 
         // if partition is set to -1, librdkafka will use the default partitioner
-        var partition = -1;
+        const partition = -1;
         producer.produce(topicName, partition, value, key);
     })
 ```
@@ -133,7 +133,7 @@ kafkaAvro.getConsumer({
   })
   .then(function(consumer) {
     // Subscribe and consume.
-    var topicName = 'test';
+    const topicName = 'test';
     consumer.subscribe([topicName]);
     consumer.consume();
     consumer.on('data', function(rawData) {
@@ -218,10 +218,10 @@ The Kafka Avro library logs messages using the [Bunyan logger](https://github.co
 **Returns** {Bunyan.Logger} [Bunyan logger](https://github.com/trentm/node-bunyan/) instance.
 
 ```js
-var KafkaAvro = require('kafka-avro');
-var fmt = require('bunyan-format');
+const KafkaAvro = require('kafka-avro');
+const fmt = require('bunyan-format');
 
-var kafkaLog  = KafkaAvro.getLogger();
+const kafkaLog  = KafkaAvro.getLogger();
 
 kafkaLog.addStream({
     type: 'stream',

@@ -1,24 +1,24 @@
 /*
  * @fileOverview Main testing helper lib.
  */
-var axios = require('axios');
-var Promise = require('bluebird');
-var bunyan = require('bunyan');
+const axios = require('axios');
+const Promise = require('bluebird');
+const bunyan = require('bunyan');
 
-var fmt = require('bunyan-format');
+const fmt = require('bunyan-format');
 
 // override to enable logging
 process.env.KAFKA_AVRO_LOG_LEVEL = 'debug';
 
-var KafkaAvro = require('../..');
+const KafkaAvro = require('../..');
 
-var schemaFix = require('../fixtures/schema.fix');
+const schemaFix = require('../fixtures/schema.fix');
 
-var schemaTwoFix = require('../fixtures/schema-two.fix');
+const schemaTwoFix = require('../fixtures/schema-two.fix');
 
-var keySchemaFix = require('../fixtures/key-schema.fix');
+const keySchemaFix = require('../fixtures/key-schema.fix');
 
-var testLib = module.exports = {};
+const testLib = module.exports = {};
 
 testLib.log = bunyan.createLogger({
   name: 'KafkaAvroTest',
@@ -36,14 +36,14 @@ testLib.topic = schemaFix.name;
 testLib.topicTwo = schemaTwoFix.name;
 testLib.topicThreeWithDuplicateSchema = schemaFix.name + '-duplicateSchema';
 
-var testBoot = false;
+let testBoot = false;
 
 /**
  * Require from all test scripts, prepares kafka for testing.
  *
  */
-testLib.init = function() {
-  beforeEach(function() {
+testLib.init = function () {
+  beforeEach(function () {
     if (testBoot) {
       return;
     }
@@ -73,7 +73,7 @@ testLib.init = function() {
     ]);
   });
 
-  beforeEach(function() {
+  beforeEach(function () {
     let kafkaAvro = new KafkaAvro({
       kafkaBroker: testLib.KAFKA_BROKER_URL,
       schemaRegistry: testLib.KAFKA_SCHEMA_REGISTRY_URL,
@@ -98,17 +98,17 @@ testLib.init = function() {
  * @param {number=} retries how many times has retried.
  * @return {Promise} A Promise.
  */
-testLib.registerSchema = Promise.method(function(topic, schema, type, retries) {
-  var schemaCreateUrl = testLib.KAFKA_SCHEMA_REGISTRY_URL +
+testLib.registerSchema = Promise.method(function (topic, schema, type, retries) {
+  const schemaCreateUrl = testLib.KAFKA_SCHEMA_REGISTRY_URL +
     '/subjects/' + topic + '-' + type + '/versions';
 
-  var data = {
+  const data = {
     schema: JSON.stringify(schema),
   };
 
   retries = retries || 0;
 
-  testLib.log.info('TEST :: Registering schema:', topic, 'on SR:', schemaCreateUrl);
+  testLib.log.info('TEST :: Registering schema subject in sr', {topic, sr: schemaCreateUrl});
 
   return axios({
     url: schemaCreateUrl,
@@ -118,11 +118,11 @@ testLib.registerSchema = Promise.method(function(topic, schema, type, retries) {
     },
     data: data,
   })
-    .catch(function(err) {
-      testLib.log.error('Axios SR creation failed:', retries, err.message);
+    .catch(function (err) {
+      testLib.log.error({err}, 'Axios SR creation failed after noOfRetries', {noOfRetries: retries});
       retries++;
-      return new Promise(function(resolve) {
-        setTimeout(function() {
+      return new Promise(function (resolve) {
+        setTimeout(function () {
           testLib.registerSchema(topic, schema, type, retries)
             .then(resolve);
         }, 1000);
@@ -136,8 +136,8 @@ testLib.registerSchema = Promise.method(function(topic, schema, type, retries) {
  * @param {number} seconds cooldown in seconds.
  * @return {Function} use is beforeEach().
  */
-testLib.cooldown = function(seconds) {
-  return function(done) {
+testLib.cooldown = function (seconds) {
+  return function (done) {
     setTimeout(done, seconds);
   };
 };

@@ -1,18 +1,18 @@
 /**
  * @fileOverview Test Magic Byte implementation.
  */
-var chai = require('chai');
-var expect = chai.expect;
-var avro = require('avsc');
+const chai = require('chai');
+const expect = chai.expect;
+const avro = require('avsc');
 
-// var testLib = require('../lib/test.lib');
-var magicByte = require('../../lib/magic-byte');
+// const testLib = require('../lib/test.lib');
+const magicByte = require('../../lib/magic-byte');
 
-var schemaFix = require('../fixtures/schema.fix');
+const schemaFix = require('../fixtures/schema.fix');
 
-describe('Magic Byte', function() {
+describe('Magic Byte', function () {
 
-  it('should encode a large message', function() {
+  it('should encode a large message', function () {
     const message = {
       name: new Array(40000).join('0'),
       long: 540,
@@ -23,7 +23,7 @@ describe('Magic Byte', function() {
     magicByte.toMessageBuffer(message, type, 109);
   });
 
-  it('should extract schemaId from encoded message', function() {
+  it('should extract schemaId from encoded message', function () {
     const message = {
       name: new Array(40).join('0'),
       long: 540,

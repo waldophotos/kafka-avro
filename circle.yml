@@ -1,16 +1,11 @@
-machine:
-  pre:
-   - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
-   - pip install docker-compose
-  services:
-    - docker
-  node:
-    version: 8.2.0
-  hosts:
-    kafka: 127.0.0.1
-
-dependencies:
-  pre:
-    - docker-compose up -d
-    - sudo apt-get update;
-    - sudo apt-get -y install libsasl2-dev libssl-dev
+version: 2
+  jobs:
+    build:
+      docker:
+          - image: circleci/node
+      steps:
+        - docker-compose up -d
+        - sudo apt-get update;
+        - sudo apt-get -y install libsasl2-dev libssl-dev
+        - checkout
+        - run: npm test

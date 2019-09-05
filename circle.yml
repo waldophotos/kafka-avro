@@ -29,6 +29,11 @@ jobs:
             # Each step uses the same `$BASH_ENV`, so need to modify it
             echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
             echo "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\"" >> $BASH_ENV
+      run:
+        name: Install node@8.16
+        command: |
+          node -v
+          npm -v
       - run:
           name: Update npm
           command: 'sudo npm install -g npm@6.10'

@@ -35,10 +35,10 @@ jobs:
             echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
             echo "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\"" >> $BASH_ENV
       - run:
-        name: verify if nodejs was installed
-        command: |
-          node -v
-          npm -v
+          name: verify if nodejs was installed
+          command: |
+            node -v
+            npm -v
       - run:
           name: Update npm
           command: 'sudo npm install -g npm@6.10'

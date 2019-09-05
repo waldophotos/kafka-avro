@@ -1,7 +1,5 @@
 version: 2
 jobs:
-  hosts:
-    kafka: 127.0.0.1
   build:
     working_directory: ~/kafka-avro
     docker:

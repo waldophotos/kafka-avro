@@ -1,10 +1,10 @@
 /**
  * @fileOverview Test produce and consume messages using kafka-avro.
  */
-var chai = require('chai');
-var expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
-var testLib = require('../lib/test.lib');
+const testLib = require('../lib/test.lib');
 
 describe('Produce', function() {
   testLib.init();
@@ -39,17 +39,19 @@ describe('Produce', function() {
   });
 
   it('should produce a message with serialized key', function(done) {
-    var message = {
+    const message = {
       name: 'Thanasis',
       long: 540,
     };
-    var key = 'key';
-
+    const key = 'key';
+    const that = this;
     this.producer.on('delivery-report', function(err, report) {
-      var parsedKey = Buffer.from(report.key).slice(6); // MAGIC_BYTE(1) | SCHEMA_ID(4) | KEY
+      const schemaId = report.key.readInt32BE(1);
+      const schemaType = that.sr.schemaTypeById[('schema-' + schemaId)];
+      const parsedKey = schemaType.decode(report.key, 5).value;
 
       expect(err).to.equal(null);
-      expect(parsedKey.toString('utf8')).to.equal(key);
+      expect(parsedKey).to.equal(key);
       expect(report.opaque).to.equal(undefined);
       this.gotReceipt = true;
     });
@@ -57,7 +59,7 @@ describe('Produce', function() {
     this.producer.produce(this.topicName, -1, message, key);
 
     //need to keep polling for a while to ensure the delivery reports are received
-    var pollLoop = setInterval(() => {
+    const pollLoop = setInterval(() => {
       this.producer.poll();
       if (this.gotReceipt) {
         clearInterval(pollLoop);
@@ -66,15 +68,14 @@ describe('Produce', function() {
     }, 1000);
   });
   it('should produce a message with an opaque value in delivery report', function(done) {
-    var message = {
+    const message = {
       name: 'Thanasis',
       long: 540,
     };
 
-    var key = 'key';
-
-    var eventTime = Date.now();
-    var opaqueRef = 'my-opaque-ref';
+    const key = 'key';
+    const eventTime = Date.now();
+    const opaqueRef = 'my-opaque-ref';
 
     this.producer.on('delivery-report', function(err, report) {
       expect(err).to.equal(null);
@@ -85,7 +86,7 @@ describe('Produce', function() {
     this.producer.produce(this.topicName, -1, message, key, eventTime, opaqueRef);
 
     //need to keep polling for a while to ensure the delivery reports are received
-    var pollLoop = setInterval(() => {
+    const pollLoop = setInterval(() => {
       this.producer.poll();
       if (this.gotReceipt) {
         clearInterval(pollLoop);
@@ -94,22 +95,22 @@ describe('Produce', function() {
     }, 1000);
   });
   it('should not allow invalid type', function() {
-    var message = {
+    const message = {
       name: 'Thanasis',
       long: '540',
     };
 
-    var binded = this.producer.produce.bind(this.producer, this.topicName,
+    const binded = this.producer.produce.bind(this.producer, this.topicName,
       -1, message, 'key');
 
     expect(binded).to.throw(Error);
   });
   it('should not allow less attributes', function() {
-    var message = {
+    const message = {
       name: 'Thanasis',
     };
 
-    var binded = this.producer.produce.bind(this.producer, this.topicName, -1, message, 'key');
+    const binded = this.producer.produce.bind(this.producer, this.topicName, -1, message, 'key');
 
     expect(binded).to.throw(Error);
   });

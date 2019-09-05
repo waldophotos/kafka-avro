@@ -63,13 +63,13 @@ testLib.init = function() {
     this.timeout(180000); // wait up to 3' for the SR to come up
 
     return Promise.all([
-      testLib.registerSchema(testLib.topic, schemaFix, 'value'),
-      testLib.registerSchema(testLib.topicTwo, schemaTwoFix, 'value'),
-      testLib.registerSchema(testLib.topicThreeWithDuplicateSchema, schemaFix, 'value'),
+      testLib.registerSchema(`Object-${testLib.topic}`, schemaFix, 'value'),
+      testLib.registerSchema(`Object-${testLib.topicTwo}`, schemaTwoFix, 'value'),
+      testLib.registerSchema(`Object-${testLib.topicThreeWithDuplicateSchema}`, schemaFix, 'value'),
 
-      testLib.registerSchema(testLib.topic, keySchemaFix, 'key'),
-      testLib.registerSchema(testLib.topicTwo, keySchemaFix, 'key'),
-      testLib.registerSchema(testLib.topicThreeWithDuplicateSchema, keySchemaFix, 'key'),
+      testLib.registerSchema(`String-${testLib.topic}`, keySchemaFix, 'key'),
+      testLib.registerSchema(`Object-${testLib.topicTwo}`, keySchemaFix, 'key'),
+      testLib.registerSchema(`Object-${testLib.topicThreeWithDuplicateSchema}`, keySchemaFix, 'key'),
     ]);
   });
 

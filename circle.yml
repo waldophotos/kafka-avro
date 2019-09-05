@@ -14,6 +14,7 @@ jobs:
       - run:
           name: Verify docker-compose was installed
           command: 'docker-compose --version'
+      - setup_remote_docker
       - run:
           name: Update npm
           command: 'sudo npm install -g npm@latest'

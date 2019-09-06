@@ -24,7 +24,7 @@
     "node": ">=0.12"
   },
   "scripts": {
-    "test": "eslint lib && mocha -b test/spec  --reporter doc > report.html && eslint lib/**",
+    "test": "eslint lib && mocha -b test/spec && eslint lib/**",
     "coverage": "nyc npm run test"
   },
   "dependencies": {

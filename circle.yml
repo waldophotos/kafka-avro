@@ -5,17 +5,8 @@ jobs:
     machine:
       image: ubuntu-1604:201903-01
       docker_layer_caching: true
-#    docker:
-#      - image: circleci/node:8.16
     steps:
       - checkout
-#      - run:
-#          name: Install Docker Compose
-#          command: |
-#            curl -L https://github.com/docker/compose/releases/download/1.19.0/docker-compose-`uname -s`-`uname -m` > ~/docker-compose
-#            chmod +x ~/docker-compose
-#            sudo mv ~/docker-compose /usr/local/bin/docker-compose
-#      - setup_remote_docker
       - run:
           name: Start kafka and schema-registry
           command: docker-compose up -d
@@ -31,28 +22,12 @@ jobs:
             # Each step uses the same `$BASH_ENV`, so need to modify it
             echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
             echo "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\"" >> $BASH_ENV
-      - run:
-          name: verify if nodejs was installed
-          command: |
-            node -v
-            npm -v
-#        - run:
-#          name: verify if nodejs was installed
-#          command: |
-#            node -v
-#            npm -v
-#      - run:
-#          name: Update npm
-#          command: 'sudo npm install -g npm@6.10'
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - save_cache:
           key: dependency-cache-{{ checksum "package.json" }}
           paths:
             - node_modules
-#      - run:
-#          name: Install libreries requierd to build node-librdkafka
-#          command: 'sudo apt-get update && sudo apt-get -y install libsasl2-dev libssl-dev'
       - run:
           name: Install projects dependencies
           command: 'npm install'
@@ -62,18 +37,6 @@ jobs:
       - run:
           name: print /etc/hosts content
           command: cat /etc/hosts
-#      - run:
-#          name: Giving kafka and schema-registry addtional 30 seconds to start
-#          command: sleep 30
       - run:
           name: Test
           command: npm run-script coverage
-      - run:
-          name: Generate code coverage
-          command: './node_modules/.bin/nyc report --reporter=text-lcov'
-      - store_artifacts:
-          path: report.html
-          prefix: tests
-      - store_artifacts:
-          path: coverage
-          prefix: coverage

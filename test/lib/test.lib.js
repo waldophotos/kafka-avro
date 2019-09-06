@@ -18,6 +18,9 @@ const schemaTwoFix = require('../fixtures/schema-two.fix');
 
 const keySchemaFix = require('../fixtures/key-schema.fix');
 
+const schemaStudent = require('../fixtures/schema-student.fix');
+const schemaTeacher = require('../fixtures/schema-teacher.fix');
+
 const testLib = module.exports = {};
 
 testLib.log = bunyan.createLogger({
@@ -34,6 +37,7 @@ testLib.KAFKA_BROKER_URL = 'kafka:9092';
 
 testLib.topic = schemaFix.name;
 testLib.topicTwo = schemaTwoFix.name;
+testLib.topicTree = `${schemaTeacher.name}-${schemaStudent.name}`;
 testLib.topicThreeWithDuplicateSchema = schemaFix.name + '-duplicateSchema';
 
 let testBoot = false;
@@ -66,6 +70,11 @@ testLib.init = function () {
       testLib.registerSchema(`${testLib.topic}-Object`, schemaFix, 'value'),
       testLib.registerSchema(`${testLib.topicTwo}-Object`, schemaTwoFix, 'value'),
       testLib.registerSchema(`${testLib.topicThreeWithDuplicateSchema}-Object`, schemaFix, 'value'),
+
+      testLib.registerSchema(`${testLib.topicTree}-Teacher`, schemaTeacher, 'key'),
+      testLib.registerSchema(`${testLib.topicTree}-Teacher`, schemaTeacher, 'value'),
+      testLib.registerSchema(`${testLib.topicTree}-Student`, schemaStudent, 'key'),
+      testLib.registerSchema(`${testLib.topicTree}-Student`, schemaStudent, 'value'),
 
       testLib.registerSchema(`${testLib.topic}-String`, keySchemaFix, 'key'),
       testLib.registerSchema(`${testLib.topicTwo}-Object`, keySchemaFix, 'key'),

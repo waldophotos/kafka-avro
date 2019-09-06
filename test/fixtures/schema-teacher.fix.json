@@ -1,0 +1,20 @@
+{
+  "type": "record",
+  "name": "Teacher",
+  "namespace": "org.test",
+  "doc": "Teacher schema for tests",
+  "fields": [
+    {
+      "name": "firstName",
+      "type": "string"
+    },
+    {
+      "name": "lastName",
+      "type": "string"
+    },
+    {
+      "name": "profession",
+      "type": "string"
+    }
+  ]
+}

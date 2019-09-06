@@ -12,6 +12,45 @@ const testLib = require('../lib/test.lib');
 function noop() {
 }
 
+const Student = /** @class */ (function () {
+  function Student(firstName, middleInitial, lastName) {
+    this.firstName = firstName;
+    this.middleInitial = middleInitial;
+    this.lastName = lastName;
+    this.fullName = firstName + ' ' + middleInitial + ' ' + lastName;
+  }
+
+  return Student;
+}());
+
+const Teacher = /** @class */ (function () {
+  function Teacher(firstName, lastName, profession) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.profession = profession;
+  }
+
+  return Teacher;
+}());
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
+function studentEquals(dataValue, student) {
+  expect(dataValue.constructor.name).to.equal(student.constructor.name);
+  expect(dataValue.firstName).to.equal(student.firstName);
+  expect(dataValue.lastName).to.equal(student.lastName);
+  expect(dataValue.middleInitial).to.equal(student.middleInitial);
+  expect(dataValue.fullName).to.equal(student.fullName);
+}
+
+function teacherEquals(dataValue, teacher) {
+  expect(dataValue.constructor.name).to.equal(teacher.constructor.name);
+  expect(dataValue.firstName).to.equal(teacher.firstName);
+  expect(dataValue.profession).to.equal(teacher.profession);
+}
+
 describe('Consume', function () {
   testLib.init();
 
@@ -122,6 +161,38 @@ describe('Consume', function () {
       setTimeout(() => {
         produceTime = Date.now();
         this.producer.produce(testLib.topic, -1, message, key);
+      }, 10000);
+    });
+
+    it('should produce and consume a multi type message using consume "on"', function (done) {
+      const teacher = new Teacher('TeacherValue', `${getRandomInt(1000)}`, `${getRandomInt(1000)}`);
+      const teacherKey = new Teacher('TeacherKey', `${getRandomInt(1000)}`, `${getRandomInt(1000)}`);
+      const student = new Student('StudentValue', `${getRandomInt(1000)}`, '' + `${getRandomInt(1000)}`);
+      const studentKey = new Student('StudentKey', `${getRandomInt(1000)}`, '' + `${getRandomInt(1000)}`);
+
+      this.consumer.subscribe([testLib.topicTree]);
+      this.consumer.consume();
+      let receivedMessages = 0;
+      this.consumer.on('data', function (rawData) {
+        receivedMessages++;
+        const k = rawData.parsedKey;
+        const v = rawData.parsed;
+
+        if (v.constructor.name === 'Teacher') {
+          teacherEquals(k, teacherKey);
+          teacherEquals(v, teacher);
+        } else {
+          studentEquals(k, studentKey);
+          studentEquals(v, student);
+        }
+        if (receivedMessages === 2) {
+          done();
+        }
+      }.bind(this));
+
+      setTimeout(() => {
+        this.producer.produce(testLib.topicTree, -1, teacher, teacherKey);
+        this.producer.produce(testLib.topicTree, -1, student, studentKey);
       }, 10000);
     });
 
@@ -238,7 +309,8 @@ describe('Consume', function () {
         this.producer.produce(testLib.topic, -1, message, key);
       }, 10000);
     });
-  });
+  })
+  ;
 
   describe('Consume using Streams', function () {
     it('should produce and consume a message using streams on two topics', function (done) {
@@ -328,4 +400,5 @@ describe('Consume', function () {
       }, 10000);
     });
   });
-});
+})
+;

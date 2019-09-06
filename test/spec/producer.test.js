@@ -111,9 +111,9 @@ describe('Produce', function () {
       name: 'Thanasis',
     };
 
-    const banded = this.producer.produce.bind(this.producer, this.topicName, -1, message, 'key');
+    const binded = this.producer.produce.bind(this.producer, this.topicName, -1, message, 'key');
 
-    expect(banded).to.throw(Error);
+    expect(binded).to.throw(Error);
   });
 
 });

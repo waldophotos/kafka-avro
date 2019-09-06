@@ -65,6 +65,7 @@ When instantiating kafka-avro you may pass the following options:
 * `fetchRefreshRate` **Number** The pooling time (in seconds) to the schemas be fetched and updated in background. This is useful to keep with schemas changes in production. The default value is `0` seconds (disabled).
 * `parseOptions` **Object** Schema parse options to pass to `avro.parse()`. `parseOptions.wrapUnions` is set to `true` by default.
 * `httpsAgent` **Object** initialized [https Agent class](https://nodejs.org/api/https.html#https_class_https_agent)
+* `shouldFailWhenSchemaIsMissing` **Boolean** Set to true if producing a message for which no AVRO schema can be found should throw an error
 
 ### Producer
 
@@ -274,6 +275,8 @@ You can use `docker-compose up` to up all the stack before you call your integra
     * `grunt release:major` for major number jump.
 
 ## Release History
+- **1.2.1**, *06 Sep 2019*
+    - Adds a new the optional config param `shouldFailWhenSchemaIsMissing` to let the producer fail when no schema could be found (instead of producing as JSON)
 - **1.2.0**, *03 March 2019*
     - Fixed cases when both key and value schemas were available, but the value was being serialized using the key schema (by [macabu](https://github.com/macabu))
     - Support for (de)serialization of keys. Added `parsedKey` and `schemaIdKey` to the consumer data object (by [macabu](https://github.com/macabu))

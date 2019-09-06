@@ -200,6 +200,12 @@ kafka-avro intercepts all incoming messages and augments the object with two mor
 
 The KafkaAvro instance also provides the following methods:
 
+### Support for several event types in the same topic
+The Kafka Avro supports several events types in the same topic. The strategy chosen to implement this is [TopicRecordNameStrategy](https://github.com/confluentinc/schema-registry/blob/master/avro-serializer/src/main/java/io/confluent/kafka/serializers/subject/TopicRecordNameStrategy.java)
+which is default strategy on the confluent platform.
+
+You can read more about this here : https://www.confluent.io/blog/put-several-event-types-kafka-topic/
+
 ### Logging
 
 The Kafka Avro library logs messages using the [Bunyan logger](https://github.com/trentm/node-bunyan/). To enable logging you will have to define at least one of the needed ENV variables:

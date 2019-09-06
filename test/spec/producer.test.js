@@ -67,6 +67,7 @@ describe('Produce', function () {
       }
     }, 1000);
   });
+
   it('should produce a message with an opaque value in delivery report', function (done) {
     const message = {
       name: 'Thanasis',

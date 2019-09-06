@@ -18,11 +18,6 @@ jobs:
           name: Start kafka and schema-registry
           command: docker-compose up -d
       - run:
-          name: verify if we can install nodejs using apt-get
-          command: |
-            sudo apt-get update
-            apt list -a nodejs
-      - run:
           name: Install node@8.16
           command: |
             set +e
@@ -39,9 +34,9 @@ jobs:
           command: |
             node -v
             npm -v
-      - run:
-          name: Update npm
-          command: 'sudo npm install -g npm@6.10'
+#      - run:
+#          name: Update npm
+#          command: 'sudo npm install -g npm@6.10'
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - save_cache:

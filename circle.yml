@@ -13,15 +13,9 @@ jobs:
       - run:
           name: Install node@8.16
           command: |
-            set +e
-            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash
-            export NVM_DIR="/opt/circleci/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm install v8.16
-            nvm alias default v8.16
-            # Each step uses the same `$BASH_ENV`, so need to modify it
-            echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
-            echo "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\"" >> $BASH_ENV
+            curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+            sudo apt install nodejs
+            node --version
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - save_cache:

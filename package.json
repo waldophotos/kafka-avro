@@ -33,7 +33,7 @@
     "bunyan": "^1.8.5",
     "bunyan-format": "^0.2.1",
     "cip": "^1.0.0",
-    "node-rdkafka": "~2.3.4"
+    "node-rdkafka": "~2.7.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",

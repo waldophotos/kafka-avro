@@ -275,6 +275,8 @@ You can use `docker-compose up` to up all the stack before you call your integra
     * `grunt release:major` for major number jump.
 
 ## Release History
+- **2.0.0**, *09 Sep 2019*
+    - **Breaking change** Update version of node-rdkafka to ~v2.7.1 - this version uses `librdkafka` v1.1.0
 - **1.2.1**, *06 Sep 2019*
     - Adds a new the optional config param `shouldFailWhenSchemaIsMissing` to let the producer fail when no schema could be found (instead of producing as JSON) (by [bfncs](https://github.com/bfncs))
 - **1.2.0**, *03 March 2019*

@@ -66,6 +66,8 @@ When instantiating kafka-avro you may pass the following options:
 * `parseOptions` **Object** Schema parse options to pass to `avro.parse()`. `parseOptions.wrapUnions` is set to `true` by default.
 * `httpsAgent` **Object** initialized [https Agent class](https://nodejs.org/api/https.html#https_class_https_agent)
 * `shouldFailWhenSchemaIsMissing` **Boolean** Set to true if producing a message for which no AVRO schema can be found should throw an error
+* `keySubjectStrategy` **String** A SubjectNameStrategy for key. It is used by the Avro serializer to determine the subject name under which the event record schemas should be registered in the schema registry. The default is TopicNameStrategy. Allowed values are [TopicRecordNameStrategy, TopicNameStrategy, RecordNameStrategy]
+* `valueSubjectStrategy` **String** **String** A SubjectNameStrategy for value. It is used by the Avro serializer to determine the subject name under which the event record schemas should be registered in the schema registry. The default is TopicNameStrategy. Allowed values are [TopicRecordNameStrategy, TopicNameStrategy, RecordNameStrategy]
 
 ### Producer
 
@@ -202,8 +204,25 @@ kafka-avro intercepts all incoming messages and augments the object with two mor
 The KafkaAvro instance also provides the following methods:
 
 ### Support for several event types in the same topic
-The Kafka Avro supports several events types in the same topic. The strategy chosen to implement this is [TopicRecordNameStrategy](https://github.com/confluentinc/schema-registry/blob/master/avro-serializer/src/main/java/io/confluent/kafka/serializers/subject/TopicRecordNameStrategy.java)
-which is default strategy on the confluent platform.
+Kafka Avro can support several events types in the same topic. This requires using TopicRecordNameStrategy strategy.
+
+```js
+const KafkaAvro = require('kafka-avro');
+
+const kafkaAvro = new KafkaAvro({
+    kafkaBroker: 'localhost:9092',
+    schemaRegistry: 'http://localhost:8081',
+    keySubjectStrategy: "TopicRecordNameStrategy",
+    valueSubjectStrategy: "TopicRecordNameStrategy",
+});
+
+// Query the Schema Registry for all topic-schema's
+// fetch them and evaluate them.
+kafkaAvro.init()
+    .then(function() {
+        console.log('Ready to use');
+    });
+```
 
 You can read more about this here : https://www.confluent.io/blog/put-several-event-types-kafka-topic/
 

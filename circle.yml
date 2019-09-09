@@ -13,9 +13,10 @@ jobs:
       - run:
           name: Install node@8.16
           command: |
-            curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+            curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
             sudo apt install nodejs
             node --version
+            npm --version
       - restore_cache:
           key: dependency-cache-{{ checksum "package.json" }}
       - save_cache:

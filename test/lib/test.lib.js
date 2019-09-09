@@ -86,6 +86,8 @@ testLib.init = function () {
     let kafkaAvro = new KafkaAvro({
       kafkaBroker: testLib.KAFKA_BROKER_URL,
       schemaRegistry: testLib.KAFKA_SCHEMA_REGISTRY_URL,
+      keySubjectStrategy: 'TopicRecordNameStrategy',
+      valueSubjectStrategy: 'TopicRecordNameStrategy',
     });
 
     testLib.log.info('test.beforeEach 2: Invoking kafkaAvro.init()...');

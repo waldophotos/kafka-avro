@@ -115,5 +115,16 @@ describe('Produce', function () {
 
     expect(binded).to.throw(Error);
   });
+  it('should fail when schema is missing and shouldFailWhenSchemaIsMissing is set', function() {
+    var message = {
+      name: 'Thanasis',
+      long: 540,
+    };
+
+    this.kafkaAvro.setShouldFailWhenSchemaIsMissing(true);
+    var binded = this.producer.produce.bind(this.producer, "topic-without-schema", -1, message, 'key');
+
+    expect(binded).to.throw(Error);
+  });
 
 });

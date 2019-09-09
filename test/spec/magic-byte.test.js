@@ -5,7 +5,6 @@ const chai = require('chai');
 const expect = chai.expect;
 const avro = require('avsc');
 
-// const testLib = require('../lib/test.lib');
 const magicByte = require('../../lib/magic-byte');
 
 const schemaFix = require('../fixtures/schema.fix');

@@ -1,6 +1,6 @@
 {
   "name": "kafka-avro",
-  "version": "1.2.1",
+  "version": "2.0.0",
   "main": "./lib/kafka-avro",
   "description": "Node.js bindings for librdkafka with Avro schema serialization.",
   "homepage": "https://github.com/waldophotos/kafka-avro",
@@ -34,7 +34,7 @@
     "bunyan": "^1.8.5",
     "bunyan-format": "^0.2.1",
     "cip": "^1.0.0",
-    "node-rdkafka": "~2.3.4"
+    "node-rdkafka": "~2.7.1"
   },
   "devDependencies": {
     "chai": "^3.5.0",

@@ -305,6 +305,8 @@ You can use `docker-compose up` to up all the stack before you call your integra
 schema subject name strategy. The purpose of the new strategies is to allow to put several event types in the same kafka topic (https://www.confluent.io/blog/put-several-event-types-kafka-topic) (by [pleszczy](github.com/pleszczy))
     - Adds new optional config params `keySubjectStrategy` and `valueSubjectStrategy` to configure schema subject name strategy for message key and value. Supported strategies are
       `[TopicNameStrategy, TopicRecordNameStrategy, RecordNameStrategy]` (by [pleszczy](github.com/pleszczy))
+- **2.0.0**, *09 Sep 2019*
+    - **Breaking change** Update version of node-rdkafka to ~v2.7.1 - this version uses `librdkafka` v1.1.0
 - **1.2.1**, *06 Sep 2019*
     - Adds a new the optional config param `shouldFailWhenSchemaIsMissing` to let the producer fail when no schema could be found (instead of producing as JSON) (by [bfncs](https://github.com/bfncs))
 - **1.2.0**, *03 March 2019*

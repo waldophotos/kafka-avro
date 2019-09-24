@@ -1,18 +1,18 @@
 /**
  * @fileOverview Test initialization of the KafkaAvro lib, SR related.
  */
-var chai = require('chai');
-var expect = chai.expect;
+const chai = require('chai');
+const expect = chai.expect;
 
 const testLib = require('../lib/test.lib');
-var SchemaRegistry = require('../../lib/schema-registry');
+const SchemaRegistry = require('../../lib/schema-registry');
 
-var srUrl = 'http://localhost:8081';
+const srUrl = 'http://localhost:8081';
 
 describe('Initialization of SR', function() {
   testLib.init();
   it('should initialize properly', function() {
-    var sr = new SchemaRegistry({ schemaRegistryUrl: srUrl });
+    const sr = new SchemaRegistry({schemaRegistryUrl: srUrl});
 
     return sr.init()
       .map((res) => {
@@ -37,7 +37,7 @@ describe('Initialization of SR', function() {
       });
   });
   it('SR instance should contain expected values after init', function() {
-    var sr = new SchemaRegistry({ schemaRegistryUrl: srUrl });
+    const sr = new SchemaRegistry({schemaRegistryUrl: srUrl});
 
     return sr.init()
       .map((res) => {

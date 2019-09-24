@@ -1,16 +1,42 @@
-machine:
-  pre:
-   - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
-   - pip install docker-compose
-  services:
-    - docker
-  node:
-    version: 8.2.0
-  hosts:
-    kafka: 127.0.0.1
-
-dependencies:
-  pre:
-    - docker-compose up -d
-    - sudo apt-get update;
-    - sudo apt-get -y install libsasl2-dev libssl-dev
+version: 2
+jobs:
+  build:
+    working_directory: ~/kafka-avro
+    machine:
+      image: ubuntu-1604:201903-01
+      docker_layer_caching: true
+    steps:
+      - checkout
+      - run:
+          name: Start kafka and schema-registry
+          command: docker-compose up -d
+      - run:
+          name: Install node@8.16
+          command: |
+            set +e
+            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.5/install.sh | bash
+            export NVM_DIR="/opt/circleci/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install v8.16
+            nvm alias default v8.16
+            # Each step uses the same `$BASH_ENV`, so need to modify it
+            echo 'export NVM_DIR="/opt/circleci/.nvm"' >> $BASH_ENV
+            echo "[ -s \"$NVM_DIR/nvm.sh\" ] && . \"$NVM_DIR/nvm.sh\"" >> $BASH_ENV
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - run:
+          name: Install projects dependencies
+          command: 'unset NVM_NODEJS_ORG_MIRROR NVM_IOJS_ORG_MIRROR && npm install'
+      - run:
+          name: Add hostnames for kafka
+          command: echo 127.0.0.1 kafka | sudo tee -a /etc/hosts && echo 127.0.0.1 schema-registry | sudo tee -a /etc/hosts && echo 127.0.0.1 zookeeper | sudo tee -a /etc/hosts
+      - run:
+          name: print /etc/hosts content
+          command: cat /etc/hosts
+      - run:
+          name: Test
+          command: npm run-script coverage

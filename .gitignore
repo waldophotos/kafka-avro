@@ -3,3 +3,6 @@ npm-debug.log
 dump.rdb
 wiki
 temp
+report.html
+coverage
+.nyc_output

@@ -27,13 +27,15 @@ describe('Base API Surface', function() {
         kafkaBroker: testLib.KAFKA_BROKER_URL,
         schemaRegistry: testLib.KAFKA_SCHEMA_REGISTRY_URL,
       });
-
+      // TODO: Test all strategies and different strategy combination for key/value
       return kafkaAvro.init()
         .bind(this)
         .then(function() {
           kafkaAvro = new KafkaAvro({
             kafkaBroker: testLib.KAFKA_BROKER_URL,
             schemaRegistry: testLib.KAFKA_SCHEMA_REGISTRY_URL,
+            keySubjectStrategy: 'TopicRecordNameStrategy',
+            valueSubjectStrategy: 'TopicRecordNameStrategy',
           });
           return kafkaAvro.init();
         })

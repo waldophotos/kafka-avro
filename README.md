@@ -31,7 +31,7 @@ You are highly encouraged to read the ["node-rdkafka" documentation](https://bli
 The `Kafka.CODES` enumeration of constant values provided by the "node-rdkafka" library is also available as a static var at:
 
 ```js
-var KafkaAvro = require('kafka-avro');
+const KafkaAvro = require('kafka-avro');
 
 console.log(KafkaAvro.CODES);
 ```
@@ -39,9 +39,9 @@ console.log(KafkaAvro.CODES);
 ### Initialize kafka-avro
 
 ```js
-var KafkaAvro = require('kafka-avro');
+const KafkaAvro = require('kafka-avro');
 
-var kafkaAvro = new KafkaAvro({
+const kafkaAvro = new KafkaAvro({
     kafkaBroker: 'localhost:9092',
     schemaRegistry: 'http://localhost:8081',
 });
@@ -66,6 +66,8 @@ When instantiating kafka-avro you may pass the following options:
 * `parseOptions` **Object** Schema parse options to pass to `avro.parse()`. `parseOptions.wrapUnions` is set to `true` by default.
 * `httpsAgent` **Object** initialized [https Agent class](https://nodejs.org/api/https.html#https_class_https_agent)
 * `shouldFailWhenSchemaIsMissing` **Boolean** Set to true if producing a message for which no AVRO schema can be found should throw an error
+* `keySubjectStrategy` **String** A SubjectNameStrategy for key. It is used by the Avro serializer to determine the subject name under which the event record schemas should be registered in the schema registry. The default is TopicNameStrategy. Allowed values are [TopicRecordNameStrategy, TopicNameStrategy, RecordNameStrategy]
+* `valueSubjectStrategy` **String** **String** A SubjectNameStrategy for value. It is used by the Avro serializer to determine the subject name under which the event record schemas should be registered in the schema registry. The default is TopicNameStrategy. Allowed values are [TopicRecordNameStrategy, TopicNameStrategy, RecordNameStrategy]
 
 ### Producer
 
@@ -79,17 +81,17 @@ kafkaAvro.getProducer({
 })
     // "getProducer()" returns a Bluebird Promise.
     .then(function(producer) {
-        var topicName = 'test';
+        const topicName = 'test';
 
         producer.on('disconnected', function(arg) {
           console.log('producer disconnected. ' + JSON.stringify(arg));
         });
 
-        var value = {name:'John'};
-        var key = 'key';
+        const value = {name:'John'};
+        const key = 'key';
 
         // if partition is set to -1, librdkafka will use the default partitioner
-        var partition = -1;
+        const partition = -1;
         producer.produce(topicName, partition, value, key);
     })
 ```
@@ -134,7 +136,7 @@ kafkaAvro.getConsumer({
   })
   .then(function(consumer) {
     // Subscribe and consume.
-    var topicName = 'test';
+    const topicName = 'test';
     consumer.subscribe([topicName]);
     consumer.consume();
     consumer.on('data', function(rawData) {
@@ -201,6 +203,29 @@ kafka-avro intercepts all incoming messages and augments the object with two mor
 
 The KafkaAvro instance also provides the following methods:
 
+### Support for several event types in the same topic
+Kafka Avro can support several events types in the same topic. This requires using TopicRecordNameStrategy strategy.
+
+```js
+const KafkaAvro = require('kafka-avro');
+
+const kafkaAvro = new KafkaAvro({
+    kafkaBroker: 'localhost:9092',
+    schemaRegistry: 'http://localhost:8081',
+    keySubjectStrategy: "TopicRecordNameStrategy",
+    valueSubjectStrategy: "TopicRecordNameStrategy",
+});
+
+// Query the Schema Registry for all topic-schema's
+// fetch them and evaluate them.
+kafkaAvro.init()
+    .then(function() {
+        console.log('Ready to use');
+    });
+```
+
+You can read more about this here : https://www.confluent.io/blog/put-several-event-types-kafka-topic/
+
 ### Logging
 
 The Kafka Avro library logs messages using the [Bunyan logger](https://github.com/trentm/node-bunyan/). To enable logging you will have to define at least one of the needed ENV variables:
@@ -219,10 +244,10 @@ The Kafka Avro library logs messages using the [Bunyan logger](https://github.co
 **Returns** {Bunyan.Logger} [Bunyan logger](https://github.com/trentm/node-bunyan/) instance.
 
 ```js
-var KafkaAvro = require('kafka-avro');
-var fmt = require('bunyan-format');
+const KafkaAvro = require('kafka-avro');
+const fmt = require('bunyan-format');
 
-var kafkaLog  = KafkaAvro.getLogger();
+const kafkaLog  = KafkaAvro.getLogger();
 
 kafkaLog.addStream({
     type: 'stream',
@@ -275,6 +300,11 @@ You can use `docker-compose up` to up all the stack before you call your integra
     * `grunt release:major` for major number jump.
 
 ## Release History
+- **3.0.0**, *19 Sep 2019* 
+    - Adds support for `RecordNameStrategy`(io.confluent.kafka.serializers.subject.RecordNameStrategy) and `TopicRecordNameStrategy`(io.confluent.kafka.serializers.subject.TopicRecordNameStrategy)
+schema subject name strategy. The purpose of the new strategies is to allow to put several event types in the same kafka topic (https://www.confluent.io/blog/put-several-event-types-kafka-topic) (by [pleszczy](github.com/pleszczy))
+    - Adds new optional config params `keySubjectStrategy` and `valueSubjectStrategy` to configure schema subject name strategy for message key and value. Supported strategies are
+      `[TopicNameStrategy, TopicRecordNameStrategy, RecordNameStrategy]` (by [pleszczy](github.com/pleszczy))
 - **2.0.0**, *09 Sep 2019*
     - **Breaking change** Update version of node-rdkafka to ~v2.7.1 - this version uses `librdkafka` v1.1.0
 - **1.2.1**, *06 Sep 2019*

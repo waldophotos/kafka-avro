@@ -1,20 +1,60 @@
 /**
  * @fileOverview Test produce and consume messages using kafka-avro.
  */
-var crypto = require('crypto');
+const crypto = require('crypto');
 
-var Promise = require('bluebird');
-var chai = require('chai');
-var expect = chai.expect;
+const Promise = require('bluebird');
+const chai = require('chai');
+const expect = chai.expect;
 
-var testLib = require('../lib/test.lib');
+const testLib = require('../lib/test.lib');
 
-function noop () {}
+function noop() {
+}
 
-describe('Consume', function() {
+const Student = /** @class */ (function () {
+  function Student(firstName, middleInitial, lastName) {
+    this.firstName = firstName;
+    this.middleInitial = middleInitial;
+    this.lastName = lastName;
+    this.fullName = firstName + ' ' + middleInitial + ' ' + lastName;
+  }
+
+  return Student;
+}());
+
+const Teacher = /** @class */ (function () {
+  function Teacher(firstName, lastName, profession) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.profession = profession;
+  }
+
+  return Teacher;
+}());
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
+function studentEquals(dataValue, student) {
+  expect(dataValue.constructor.name).to.equal(student.constructor.name);
+  expect(dataValue.firstName).to.equal(student.firstName);
+  expect(dataValue.lastName).to.equal(student.lastName);
+  expect(dataValue.middleInitial).to.equal(student.middleInitial);
+  expect(dataValue.fullName).to.equal(student.fullName);
+}
+
+function teacherEquals(dataValue, teacher) {
+  expect(dataValue.constructor.name).to.equal(teacher.constructor.name);
+  expect(dataValue.firstName).to.equal(teacher.firstName);
+  expect(dataValue.profession).to.equal(teacher.profession);
+}
+
+describe('Consume', function () {
   testLib.init();
 
-  beforeEach(function() {
+  beforeEach(function () {
     this.consOpts = {
       'group.id': 'testKafkaAvro' + crypto.randomBytes(20).toString('hex'),
       'enable.auto.commit': true,
@@ -29,7 +69,7 @@ describe('Consume', function() {
       });
   });
 
-  beforeEach(function() {
+  beforeEach(function () {
     testLib.log.info('beforeEach 2 on Consume');
     return this.kafkaAvro.getProducer({
       'dr_cb': true,
@@ -39,16 +79,16 @@ describe('Consume', function() {
         testLib.log.info('beforeEach 2 on Consume: Got producer');
         this.producer = producer;
 
-        producer.on('event.log', function(log) {
+        producer.on('event.log', function (log) {
           testLib.log.info('producer log:', log);
         });
 
         //logging all errors
-        producer.on('error', function(err) {
+        producer.on('error', function (err) {
           testLib.log.error('Error from producer:', err);
         });
 
-        producer.on('delivery-report', function(err, report) {
+        producer.on('delivery-report', function (err, report) {
           testLib.log.info('delivery-report:' + JSON.stringify(report));
           this.gotReceipt = true;
         }.bind(this));
@@ -58,24 +98,24 @@ describe('Consume', function() {
       });
   });
 
-  afterEach(function() {
+  afterEach(function () {
     testLib.log.info('afterEach 1 on Consume: Disposing...');
     return this.kafkaAvro.dispose()
-      .then(function() {
+      .then(function () {
         testLib.log.info('afterEach 1 on Consume: Disposed');
       });
   });
 
-  describe('Consumer direct "on"', function() {
+  describe('Consumer direct "on"', function () {
 
-    beforeEach(function() {
+    beforeEach(function () {
       return new Promise(function (resolve, reject) {
-        this.consumer.on('ready', function() {
+        this.consumer.on('ready', function () {
           testLib.log.debug('getConsumer() :: Got "ready" event.');
           resolve();
         });
 
-        this.consumer.connect({}, function(err) {
+        this.consumer.connect({}, function (err) {
           if (err) {
             testLib.log.error('getConsumer() :: Connect failed:', err);
             reject(err);
@@ -87,24 +127,24 @@ describe('Consume', function() {
       }.bind(this));
     });
 
-    it('should produce and consume a message using consume "on"', function(done) {
-      var produceTime = 0;
+    it('should produce and consume a message using consume "on"', function (done) {
+      let produceTime = 0;
 
-      var message = {
+      const message = {
         name: 'Thanasis',
         long: 540,
       };
 
-      var key = 'test-key';
+      const key = 'test-key';
 
       // //start consuming messages
       this.consumer.subscribe([testLib.topic]);
       this.consumer.consume();
 
-      this.consumer.on('data', function(rawData) {
-        var dataValue = rawData.parsed;
-        var dataKey = rawData.parsedKey;
-        var diff = Date.now() - produceTime;
+      this.consumer.on('data', function (rawData) {
+        const dataValue = rawData.parsed;
+        const dataKey = rawData.parsedKey;
+        const diff = Date.now() - produceTime;
         testLib.log.info('Produce to consume time in ms:', diff);
         expect(dataValue).to.have.keys([
           'name',
@@ -124,10 +164,42 @@ describe('Consume', function() {
       }, 10000);
     });
 
-    it('should produce and consume a message using consume "on" with timestamp when provided', function(done) {
-      var produceTime = Date.parse('04 Dec 2015 00:12:00 GMT'); //use date in the past to guarantee we don't get Date.now()
+    it('should produce and consume a multi type message using consume "on"', function (done) {
+      const teacher = new Teacher('TeacherValue', `${getRandomInt(1000)}`, `${getRandomInt(1000)}`);
+      const teacherKey = new Teacher('TeacherKey', `${getRandomInt(1000)}`, `${getRandomInt(1000)}`);
+      const student = new Student('StudentValue', `${getRandomInt(1000)}`, '' + `${getRandomInt(1000)}`);
+      const studentKey = new Student('StudentKey', `${getRandomInt(1000)}`, '' + `${getRandomInt(1000)}`);
 
-      var message = {
+      this.consumer.subscribe([testLib.topicTree]);
+      this.consumer.consume();
+      let receivedMessages = 0;
+      this.consumer.on('data', function (rawData) {
+        receivedMessages++;
+        const k = rawData.parsedKey;
+        const v = rawData.parsed;
+
+        if (v.constructor.name === 'Teacher') {
+          teacherEquals(k, teacherKey);
+          teacherEquals(v, teacher);
+        } else {
+          studentEquals(k, studentKey);
+          studentEquals(v, student);
+        }
+        if (receivedMessages === 2) {
+          done();
+        }
+      }.bind(this));
+
+      setTimeout(() => {
+        this.producer.produce(testLib.topicTree, -1, teacher, teacherKey);
+        this.producer.produce(testLib.topicTree, -1, student, studentKey);
+      }, 10000);
+    });
+
+    it('should produce and consume a message using consume "on" with timestamp when provided', function (done) {
+      let produceTime = Date.parse('04 Dec 2015 00:12:00 GMT'); //use date in the past to guarantee we don't get Date.now()
+
+      const message = {
         name: 'Thanasis',
         long: 540,
       };
@@ -136,7 +208,7 @@ describe('Consume', function() {
       this.consumer.subscribe([testLib.topic]);
       this.consumer.consume();
 
-      this.consumer.on('data', function(rawData) {
+      this.consumer.on('data', function (rawData) {
         expect(rawData.timestamp).to.equal(produceTime);
         done();
       }.bind(this));
@@ -147,26 +219,26 @@ describe('Consume', function() {
       }, 10000);
     });
 
-    it('should produce and consume a message using consume "on", on a non Schema Registry topic', function(done) {
-      var produceTime = 0;
+    it('should produce and consume a message using consume "on", on a non Schema Registry topic', function (done) {
+      let produceTime = 0;
 
-      var topicName = 'testKafkaAvro' + crypto.randomBytes(20).toString('hex');
+      const topicName = 'testKafkaAvro' + crypto.randomBytes(20).toString('hex');
 
-      var message = {
+      const message = {
         name: 'Thanasis',
         long: 540,
       };
 
-      var key = 'no-schema-key';
+      const key = 'no-schema-key';
 
       // //start consuming messages
       this.consumer.subscribe([topicName]);
       this.consumer.consume();
 
-      this.consumer.on('data', function(rawData) {
-        var dataValue = rawData.parsed;
-        var dataKey = rawData.parsedKey;
-        var diff = Date.now() - produceTime;
+      this.consumer.on('data', function (rawData) {
+        const dataValue = rawData.parsed;
+        const dataKey = rawData.parsedKey;
+        const diff = Date.now() - produceTime;
         testLib.log.info('Produce to consume time in ms:', diff);
         expect(dataValue).to.have.keys([
           'name',
@@ -187,15 +259,15 @@ describe('Consume', function() {
       }, 10000);
     });
 
-    it('should produce and consume on two topics using a single consumer', function(done) {
-      var produceTime = 0;
+    it('should produce and consume on two topics using a single consumer', function (done) {
+      let produceTime = 0;
 
-      var message = {
+      const message = {
         name: 'Thanasis',
         long: 540,
       };
 
-      var key = 'two-topics';
+      const key = 'two-topics';
 
       // //start consuming messages
       this.consumer.subscribe([
@@ -204,19 +276,19 @@ describe('Consume', function() {
       ]);
       this.consumer.consume();
 
-      var receivedOne = false;
-      var receivedTwo = false;
+      let receivedOne = false;
+      let receivedTwo = false;
 
-      this.consumer.on('data', function(rawData) {
+      this.consumer.on('data', function (rawData) {
         if (rawData.topic === testLib.topic) {
           receivedOne = true;
         } else {
           receivedTwo = true;
         }
 
-        var dataValue = rawData.parsed;
-        var dataKey = rawData.parsedKey;
-        var diff = Date.now() - produceTime;
+        const dataValue = rawData.parsed;
+        const dataKey = rawData.parsedKey;
+        const diff = Date.now() - produceTime;
         testLib.log.info('Produce to consume time in ms:', diff);
         expect(dataValue).to.have.keys([
           'name',
@@ -237,46 +309,47 @@ describe('Consume', function() {
         this.producer.produce(testLib.topic, -1, message, key);
       }, 10000);
     });
-  });
+  })
+  ;
 
-  describe('Consume using Streams', function() {
-    it('should produce and consume a message using streams on two topics', function(done) {
-      var produceTime = 0;
+  describe('Consume using Streams', function () {
+    it('should produce and consume a message using streams on two topics', function (done) {
+      let produceTime = 0;
 
-      var message = {
+      const message = {
         name: 'Thanasis',
         long: 540,
       };
 
-      var key = 'key-stream';
+      const key = 'key-stream';
 
-      var isDone = false;
+      let isDone = false;
 
-      this.kafkaAvro.getConsumerStream(this.consOpts, { 'enable.auto.commit': true }, { topics: [ testLib.topic, testLib.topicTwo ] })
-      .then(function (consumerStream) {
-        consumerStream.on('error', noop);
+      this.kafkaAvro.getConsumerStream(this.consOpts, {'enable.auto.commit': true}, {topics: [testLib.topic, testLib.topicTwo]})
+        .then(function (consumerStream) {
+          consumerStream.on('error', noop);
 
-        consumerStream.on('data', function(dataRaw) {
-          var dataValue = dataRaw.parsed;
-          var dataKey = dataRaw.parsedKey;
-          var diff = Date.now() - produceTime;
-          testLib.log.info('Produce to consume time in ms:', diff);
-          expect(dataValue).to.have.keys([
-            'name',
-            'long',
-          ]);
+          consumerStream.on('data', function (dataRaw) {
+            const dataValue = dataRaw.parsed;
+            const dataKey = dataRaw.parsedKey;
+            const diff = Date.now() - produceTime;
+            testLib.log.info('Produce to consume time in ms:', diff);
+            expect(dataValue).to.have.keys([
+              'name',
+              'long',
+            ]);
 
-          expect(dataValue.name).to.equal(message.name);
-          expect(dataValue.long).to.equal(message.long);
-          expect(dataKey).to.equal(key);
+            expect(dataValue.name).to.equal(message.name);
+            expect(dataValue.long).to.equal(message.long);
+            expect(dataKey).to.equal(key);
 
-          if (!isDone) {
-            consumerStream.consumer.disconnect();
-            done();
-          }
-          isDone = true;
+            if (!isDone) {
+              consumerStream.consumer.disconnect();
+              done();
+            }
+            isDone = true;
+          });
         });
-      });
 
       setTimeout(() => {
         produceTime = Date.now();
@@ -285,26 +358,26 @@ describe('Consume', function() {
       }, 10000);
     });
 
-    it('should produce and consume a message using streams on a not SR topic', function(done) {
-      var produceTime = 0;
+    it('should produce and consume a message using streams on a not SR topic', function (done) {
+      let produceTime = 0;
 
-      var topicName = 'testKafkaAvro' + crypto.randomBytes(20).toString('hex');
+      const topicName = 'testKafkaAvro' + crypto.randomBytes(20).toString('hex');
 
-      var message = {
+      const message = {
         name: 'Thanasis',
         long: 540,
       };
 
-      var key = 'not-sr-key';
+      const key = 'not-sr-key';
 
-      this.kafkaAvro.getConsumerStream(this.consOpts, { 'enable.auto.commit': true }, { topics: topicName })
+      this.kafkaAvro.getConsumerStream(this.consOpts, {'enable.auto.commit': true}, {topics: topicName})
         .then(function (consumerStream) {
           consumerStream.on('error', noop);
 
-          consumerStream.on('data', function(dataRaw) {
-            var dataValue = dataRaw.parsed;
-            var dataKey = dataRaw.parsedKey;
-            var diff = Date.now() - produceTime;
+          consumerStream.on('data', function (dataRaw) {
+            const dataValue = dataRaw.parsed;
+            const dataKey = dataRaw.parsedKey;
+            const diff = Date.now() - produceTime;
             testLib.log.info('Produce to consume time in ms:', diff);
             expect(dataValue).to.have.keys([
               'name',
@@ -327,4 +400,5 @@ describe('Consume', function() {
       }, 10000);
     });
   });
-});
+})
+;

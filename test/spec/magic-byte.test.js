@@ -1,43 +1,49 @@
 /**
  * @fileOverview Test Magic Byte implementation.
  */
-var chai = require('chai');
-var expect = chai.expect;
-var avro = require('avsc');
+const chai = require('chai');
+const expect = chai.expect;
+const avro = require('avsc');
 
-// var testLib = require('../lib/test.lib');
-var magicByte = require('../../lib/magic-byte');
+const magicByte = require('../../lib/magic-byte');
 
-var schemaFix = require('../fixtures/schema.fix');
+const schemaFix = require('../fixtures/schema.fix');
 
-describe('Magic Byte', function() {
+describe('Magic Byte', function () {
 
-  it('should encode a large message', function() {
-    var message = {
+  it('should encode a large message', function () {
+    const message = {
       name: new Array(40000).join('0'),
       long: 540,
     };
 
-    var type = avro.parse(schemaFix, {wrapUnions: true});
+    const type = avro.parse(schemaFix, {wrapUnions: true});
 
     magicByte.toMessageBuffer(message, type, 109);
   });
 
-  it('should extract schemaId from encoded message', function() {
-    var message = {
+  it('should extract schemaId from encoded message', function () {
+    const message = {
       name: new Array(40).join('0'),
       long: 540,
     };
 
-    var schemaId = 109;
+    const schemaId = 109;
 
-    var type = avro.parse(schemaFix, {wrapUnions: true});
+    const type = avro.parse(schemaFix, {wrapUnions: true});
 
-    var encoded = magicByte.toMessageBuffer(message, type, schemaId);
+    const encoded = magicByte.toMessageBuffer(message, type, schemaId);
 
-    var decoded = magicByte.fromMessageBuffer(type, encoded, {
+    const decoded = magicByte.fromMessageBuffer(encoded, {
       schemaTypeById: {
-        schemaId: schemaId
+        'schema-109': {
+          // eslint-disable-next-line no-unused-vars
+          'decode': function (buf, pos, resolver) {
+            return {
+              'value': message
+            };
+          }
+        }
       }
     });
 

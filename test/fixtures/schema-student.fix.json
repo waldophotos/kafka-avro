@@ -1,0 +1,24 @@
+{
+  "type": "record",
+  "name": "Student",
+  "namespace": "org.test",
+  "doc": "Student schema for tests",
+  "fields": [
+    {
+      "name": "firstName",
+      "type": "string"
+    },
+    {
+      "name": "middleInitial",
+      "type": "string"
+    },
+    {
+      "name": "lastName",
+      "type": "string"
+    },
+    {
+      "name": "fullName",
+      "type": "string"
+    }
+  ]
+}

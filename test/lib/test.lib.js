@@ -67,9 +67,9 @@ testLib.init = function () {
     this.timeout(180000); // wait up to 3' for the SR to come up
 
     return Promise.all([
-      testLib.registerSchema(`${testLib.topic}-Object`, schemaFix, 'value'),
-      testLib.registerSchema(`${testLib.topicTwo}-Object`, schemaTwoFix, 'value'),
-      testLib.registerSchema(`${testLib.topicThreeWithDuplicateSchema}-Object`, schemaFix, 'value'),
+      testLib.registerSchema(`${testLib.topic}`, schemaFix, 'value'),
+      testLib.registerSchema(`${testLib.topicTwo}`, schemaTwoFix, 'value'),
+      testLib.registerSchema(`${testLib.topicThreeWithDuplicateSchema}`, schemaFix, 'value'),
 
       testLib.registerSchema(`${testLib.topicTree}-Teacher`, schemaTeacher, 'key'),
       testLib.registerSchema(`${testLib.topicTree}-Teacher`, schemaTeacher, 'value'),
@@ -77,8 +77,8 @@ testLib.init = function () {
       testLib.registerSchema(`${testLib.topicTree}-Student`, schemaStudent, 'value'),
 
       testLib.registerSchema(`${testLib.topic}-String`, keySchemaFix, 'key'),
-      testLib.registerSchema(`${testLib.topicTwo}-Object`, keySchemaFix, 'key'),
-      testLib.registerSchema(`${testLib.topicThreeWithDuplicateSchema}-Object`, keySchemaFix, 'key'),
+      testLib.registerSchema(`${testLib.topicTwo}`, keySchemaFix, 'key'),
+      testLib.registerSchema(`${testLib.topicThreeWithDuplicateSchema}`, keySchemaFix, 'key'),
     ]);
   });
 

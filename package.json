@@ -21,7 +21,7 @@
   },
   "license": "MIT",
   "engines": {
-    "node": ">=0.12"
+    "node": ">=6.0.0"
   },
   "scripts": {
     "test": "eslint lib && mocha -b test/spec && eslint lib/**",

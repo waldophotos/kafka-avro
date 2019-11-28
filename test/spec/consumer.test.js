@@ -12,26 +12,36 @@ const testLib = require('../lib/test.lib');
 function noop() {
 }
 
-const Student = /** @class */ (function () {
-  function Student(firstName, middleInitial, lastName) {
+
+class TeacherKey {
+  constructor(id) {
+    this.id = id;
+  }
+}
+
+class StudentKey {
+  constructor(id) {
+    this.id = id;
+  }
+}
+
+class Teacher {
+  constructor(firstName, lastName, profession) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.profession = profession;
+  }
+}
+
+
+class Student  {
+  constructor(firstName, middleInitial, lastName) {
     this.firstName = firstName;
     this.middleInitial = middleInitial;
     this.lastName = lastName;
     this.fullName = firstName + ' ' + middleInitial + ' ' + lastName;
   }
-
-  return Student;
-}());
-
-const Teacher = /** @class */ (function () {
-  function Teacher(firstName, lastName, profession) {
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.profession = profession;
-  }
-
-  return Teacher;
-}());
+}
 
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
@@ -43,6 +53,16 @@ function studentEquals(dataValue, student) {
   expect(dataValue.lastName).to.equal(student.lastName);
   expect(dataValue.middleInitial).to.equal(student.middleInitial);
   expect(dataValue.fullName).to.equal(student.fullName);
+}
+
+function studentKeyEquals(dataValue, student) {
+  expect(dataValue.constructor.name).to.equal('StudentKey');
+  expect(dataValue.id).to.equal(student.id);
+}
+
+function teacherKeyEquals(dataValue, student) {
+  expect(dataValue.constructor.name).to.equal('TeacherKey');
+  expect(dataValue.id).to.equal(student.id);
 }
 
 function teacherEquals(dataValue, teacher) {
@@ -166,9 +186,9 @@ describe('Consume', function () {
 
     it('should produce and consume a multi type message using consume "on"', function (done) {
       const teacher = new Teacher('TeacherValue', `${getRandomInt(1000)}`, `${getRandomInt(1000)}`);
-      const teacherKey = new Teacher('TeacherKey', `${getRandomInt(1000)}`, `${getRandomInt(1000)}`);
+      const teacherKey = new TeacherKey( `${getRandomInt(1000)}`);
       const student = new Student('StudentValue', `${getRandomInt(1000)}`, '' + `${getRandomInt(1000)}`);
-      const studentKey = new Student('StudentKey', `${getRandomInt(1000)}`, '' + `${getRandomInt(1000)}`);
+      const studentKey = new StudentKey(`${getRandomInt(1000)}`);
 
       this.consumer.subscribe([testLib.topicTree]);
       this.consumer.consume();
@@ -179,10 +199,10 @@ describe('Consume', function () {
         const v = rawData.parsed;
 
         if (v.constructor.name === 'Teacher') {
-          teacherEquals(k, teacherKey);
+          teacherKeyEquals(k, teacherKey);
           teacherEquals(v, teacher);
         } else {
-          studentEquals(k, studentKey);
+          studentKeyEquals(k, studentKey);
           studentEquals(v, student);
         }
         if (receivedMessages === 2) {

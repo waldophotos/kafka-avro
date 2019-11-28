@@ -1,0 +1,12 @@
+{
+  "type": "record",
+  "name": "StudentKey",
+  "namespace": "org.test",
+  "doc": "Student-key schema for tests",
+  "fields": [
+    {
+      "name": "id",
+      "type": "string"
+    }
+  ]
+}

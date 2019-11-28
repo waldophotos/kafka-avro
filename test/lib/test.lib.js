@@ -19,7 +19,10 @@ const schemaTwoFix = require('../fixtures/schema-two.fix');
 const keySchemaFix = require('../fixtures/key-schema.fix');
 
 const schemaStudent = require('../fixtures/schema-student.fix');
+const schemaStudentKey = require('../fixtures/schema-student-key.fix');
+
 const schemaTeacher = require('../fixtures/schema-teacher.fix');
+const schemaTeacherKey = require('../fixtures/schema-teacher-key.fix');
 
 const testLib = module.exports = {};
 
@@ -38,7 +41,6 @@ testLib.KAFKA_BROKER_URL = 'kafka:9092';
 testLib.topic = schemaFix.name;
 testLib.topicTwo = schemaTwoFix.name;
 testLib.topicTree = `${schemaTeacher.name}-${schemaStudent.name}`;
-testLib.topicThreeWithDuplicateSchema = schemaFix.name + '-duplicateSchema';
 
 let testBoot = false;
 
@@ -69,16 +71,14 @@ testLib.init = function () {
     return Promise.all([
       testLib.registerSchema(`${testLib.topic}`, schemaFix, 'value'),
       testLib.registerSchema(`${testLib.topicTwo}`, schemaTwoFix, 'value'),
-      testLib.registerSchema(`${testLib.topicThreeWithDuplicateSchema}`, schemaFix, 'value'),
 
-      testLib.registerSchema(`${testLib.topicTree}-Teacher`, schemaTeacher, 'key'),
+      testLib.registerSchema(`${testLib.topicTree}-TeacherKey`, schemaTeacherKey, 'key'),
       testLib.registerSchema(`${testLib.topicTree}-Teacher`, schemaTeacher, 'value'),
-      testLib.registerSchema(`${testLib.topicTree}-Student`, schemaStudent, 'key'),
+      testLib.registerSchema(`${testLib.topicTree}-StudentKey`, schemaStudentKey, 'key'),
       testLib.registerSchema(`${testLib.topicTree}-Student`, schemaStudent, 'value'),
 
       testLib.registerSchema(`${testLib.topic}-String`, keySchemaFix, 'key'),
       testLib.registerSchema(`${testLib.topicTwo}`, keySchemaFix, 'key'),
-      testLib.registerSchema(`${testLib.topicThreeWithDuplicateSchema}`, keySchemaFix, 'key'),
     ]);
   });
 

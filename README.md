@@ -301,10 +301,15 @@ kafka docker run --rm -p 8000:8000 \
 ## Releasing
 
 1. Update the changelog bellow.
-1. Ensure you are on master.
-1. Type: `grunt release`
+2. Ensure you are on master.
+3. Type: `grunt release`
     * `grunt release:minor` for minor number jump.
     * `grunt release:major` for major number jump.
+
+## TODO
+1. Support non avro key/value
+2. Move away from using constructor.name in favor of some king of `id` and `namespace`
+3. Rewrite into TypeScript
 
 ## Release History
 - **3.0.0**, *19 Sep 2019* 

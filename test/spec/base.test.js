@@ -26,6 +26,7 @@ describe('Base API Surface', function() {
       let kafkaAvro = new KafkaAvro({
         kafkaBroker: testLib.KAFKA_BROKER_URL,
         schemaRegistry: testLib.KAFKA_SCHEMA_REGISTRY_URL,
+        shouldFailWhenSchemaIsMissing: true
       });
       // TODO: Test all strategies and different strategy combination for key/value
       return kafkaAvro.init()

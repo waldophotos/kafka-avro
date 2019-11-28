@@ -291,6 +291,13 @@ You can use `docker-compose up` to up all the stack before you call your integra
 ```
 
 
+You can use a simple tool called schema-registry-ui to troubleshoot tests failing due to schema issues.
+```
+kafka docker run --rm -p 8000:8000 \
+           -e "SCHEMAREGISTRY_URL=http://schema-registry:8081" \
+           landoop/schema-registry-ui
+```
+
 ## Releasing
 
 1. Update the changelog bellow.

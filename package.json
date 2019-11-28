@@ -28,13 +28,13 @@
     "coverage": "nyc npm run test"
   },
   "dependencies": {
-    "avsc": "^5.4.13",
+    "avsc": "^5.4.16",
     "axios": "^0.15.3",
     "bluebird": "^3.4.6",
     "bunyan": "^1.8.5",
     "bunyan-format": "^0.2.1",
     "cip": "^1.0.0",
-    "node-rdkafka": "~2.7.1"
+    "node-rdkafka": "~2.7.4"
   },
   "devDependencies": {
     "chai": "^3.5.0",

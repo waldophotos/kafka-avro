@@ -306,11 +306,6 @@ kafka docker run --rm -p 8000:8000 \
     * `grunt release:minor` for minor number jump.
     * `grunt release:major` for major number jump.
 
-## TODO
-1. Support non avro key/value
-2. Move away from using constructor.name in favor of some king of `id` and `namespace`
-3. Rewrite into TypeScript
-
 ## Release History
 - **3.0.0**, *19 Sep 2019* 
     - Adds support for `RecordNameStrategy`(io.confluent.kafka.serializers.subject.RecordNameStrategy) and `TopicRecordNameStrategy`(io.confluent.kafka.serializers.subject.TopicRecordNameStrategy)

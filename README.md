@@ -2,7 +2,7 @@
 
 > Node.js bindings for librdkafka with Avro schema serialization.
 
-[![CircleCI](https://circleci.com/gh/waldophotos/kafka-avro/tree/master.svg?style=svg)](https://circleci.com/gh/waldophotos/kafka-avro/tree/master)
+[![CircleCI](https://circleci.com/gh/pleszczy/kafka-avro/tree/master.svg)](https://circleci.com/gh/pleszczy/kafka-avro/tree/master)
 
 The kafka-avro library is a wrapper that combines the [node-rdkafka][node-rdkafka] and [avsc][avsc] libraries to allow for Production and Consumption of messages on kafka validated and serialized by Avro.
 
@@ -100,6 +100,27 @@ What kafka-avro basically does is wrap around node-rdkafka and intercept the pro
 
 * [node-rdkafka Producer Tutorial](https://blizzard.github.io/node-rdkafka/current/tutorial-producer_.html)
 * [Full list of Producer's options](https://github.com/edenhill/librdkafka/blob/2213fb29f98a7a73f22da21ef85e0783f6fd67c4/CONFIGURATION.md)
+
+#### How to produce events using TopicRecordNameStrategy or RecordNameStrategy
+To produce events using TopicRecordNameStrategy or RecordNameStrategy you need to either define a property `__schemaName` on the object being serialized or name the object like your avro schema and use a new constructor. 
+It is is recommended to use `__schemaName` to avoid issues with transpiling and minimization where the constructor name could be `lost`. This will also alway defining a namespace e.g. `org.mypackage.audit.Event`
+* Define a property `__schemaName` e.g.
+```ts
+   class CreatePromotionAuditLogMessage {
+    public readonly __schemaName: string = 'org.mypackage.Event';
+    constructor(public propertyA: string, public propertyB: string) {}
+}
+```
+This will match to avro schema subject  `${topicName}-org.mypackage.Event` or `org.mypackage.Event`
+* Use constructor name
+```ts
+class CreatePromotionAuditLogMessage {
+   constructor(public propertyA: string, public propertyB: string) {}
+}
+
+let myObj = new  CreatePromotionAuditLogMessage()
+```
+This will match to avro schema subject  `${topicName}-CreatePromotionAuditLogMessage` or `CreatePromotionAuditLogMessage`
 
 ### Consumer
 
@@ -307,6 +328,12 @@ kafka docker run --rm -p 8000:8000 \
     * `grunt release:major` for major number jump.
 
 ## Release History
+- **3.0.1**, *19 Sep 2019* 
+    - Adds support avro namespaces
+    - Fixing shouldFailWhenSchemaIsMissing property
+    - Reimplementing  `RecordNameStrategy`(io.confluent.kafka.serializers.subject.RecordNameStrategy) and `TopicRecordNameStrategy`(io.confluent.kafka.serializers.subject.TopicRecordNameStrategy) to use
+    `__schemaName` and using `constructor().name()` as a fallback. Using `__schemaName` will allow defining namespaces and is more reliable then constructor name which sometimes can be `lost` during transpiling or minimizing.
+    To use this future you need to define `__schemaName` property on your objects
 - **3.0.0**, *19 Sep 2019* 
     - Adds support for `RecordNameStrategy`(io.confluent.kafka.serializers.subject.RecordNameStrategy) and `TopicRecordNameStrategy`(io.confluent.kafka.serializers.subject.TopicRecordNameStrategy)
 schema subject name strategy. The purpose of the new strategies is to allow to put several event types in the same kafka topic (https://www.confluent.io/blog/put-several-event-types-kafka-topic) (by [pleszczy](github.com/pleszczy))

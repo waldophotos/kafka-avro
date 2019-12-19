@@ -328,7 +328,7 @@ kafka docker run --rm -p 8000:8000 \
     * `grunt release:major` for major number jump.
 
 ## Release History
-- **3.0.1**, *19 Sep 2019* 
+- **3.1.0**, *19 Dec 2019* 
     - Adds support avro namespaces
     - Fixing shouldFailWhenSchemaIsMissing property
     - Reimplementing  `RecordNameStrategy`(io.confluent.kafka.serializers.subject.RecordNameStrategy) and `TopicRecordNameStrategy`(io.confluent.kafka.serializers.subject.TopicRecordNameStrategy) to use

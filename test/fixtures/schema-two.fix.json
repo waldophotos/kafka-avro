@@ -1,12 +1,15 @@
 {
   "type": "record",
-  "name": "testNodeKafkaAvroTwo",
-  "namespace": "test.kafkaAvro",
-  "fields": [{
-    "name": "name",
-    "type": "string"
-  }, {
-    "name": "long",
-    "type": "long"
-  }]
+  "name": "TestNodeKafkaAvroTwo",
+  "namespace": "org.test",
+  "fields": [
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "long",
+      "type": "long"
+    }
+  ]
 }

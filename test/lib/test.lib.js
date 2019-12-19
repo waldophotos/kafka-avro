@@ -4,6 +4,7 @@
 const axios = require('axios');
 const Promise = require('bluebird');
 const bunyan = require('bunyan');
+const _ = require('lodash');
 
 const fmt = require('bunyan-format');
 
@@ -69,16 +70,16 @@ testLib.init = function () {
     this.timeout(180000); // wait up to 3' for the SR to come up
 
     return Promise.all([
-      testLib.registerSchema(`${testLib.topic}`, schemaFix, 'value'),
-      testLib.registerSchema(`${testLib.topicTwo}`, schemaTwoFix, 'value'),
+      testLib.registerSchema(`${testLib.topic}-org.test.TestNodeKafkaAvro`, schemaFix),
+      testLib.registerSchema(`${testLib.topicTwo}-org.test.TestNodeKafkaAvroTwo`, schemaTwoFix),
 
-      testLib.registerSchema(`${testLib.topicTree}-TeacherKey`, schemaTeacherKey, 'key'),
-      testLib.registerSchema(`${testLib.topicTree}-Teacher`, schemaTeacher, 'value'),
-      testLib.registerSchema(`${testLib.topicTree}-StudentKey`, schemaStudentKey, 'key'),
-      testLib.registerSchema(`${testLib.topicTree}-Student`, schemaStudent, 'value'),
+      testLib.registerSchema(`${testLib.topicTree}-org.test.TeacherKey`, schemaTeacherKey),
+      testLib.registerSchema(`${testLib.topicTree}-org.test.Teacher`, schemaTeacher),
+      testLib.registerSchema(`${testLib.topicTree}-org.test.StudentKey`, schemaStudentKey),
+      testLib.registerSchema(`${testLib.topicTree}-org.test.Student`, schemaStudent),
 
       testLib.registerSchema(`${testLib.topic}-String`, keySchemaFix, 'key'),
-      testLib.registerSchema(`${testLib.topicTwo}`, keySchemaFix, 'key'),
+      testLib.registerSchema(`${testLib.topicTwo}-String`, keySchemaFix, 'key'),
     ]);
   });
 
@@ -101,6 +102,10 @@ testLib.init = function () {
   });
 };
 
+function optionalType(type) {
+  return _.isEmpty(type) ? '' : `-${type}`;
+}
+
 /**
  * Register a schema on SR.
  *
@@ -110,8 +115,7 @@ testLib.init = function () {
  * @return {Promise} A Promise.
  */
 testLib.registerSchema = Promise.method(function (topic, schema, type, retries) {
-  const schemaCreateUrl = testLib.KAFKA_SCHEMA_REGISTRY_URL +
-    '/subjects/' + topic + '-' + type + '/versions';
+  const schemaCreateUrl = `${testLib.KAFKA_SCHEMA_REGISTRY_URL}/subjects/${topic}${optionalType(type)}/versions`;
 
   const data = {
     schema: JSON.stringify(schema),

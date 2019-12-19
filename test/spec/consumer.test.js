@@ -16,12 +16,14 @@ function noop() {
 class TeacherKey {
   constructor(id) {
     this.id = id;
+    this.__schemaName = 'org.test.TeacherKey';
   }
 }
 
 class StudentKey {
   constructor(id) {
     this.id = id;
+    this.__schemaName = 'org.test.StudentKey';
   }
 }
 
@@ -30,16 +32,34 @@ class Teacher {
     this.firstName = firstName;
     this.lastName = lastName;
     this.profession = profession;
+    this.__schemaName = 'org.test.Teacher';
+  }
+}
+
+class TestNodeKafkaAvro {
+  constructor(name, long) {
+    this.name = name;
+    this.long = long;
+    this.__schemaName = 'org.test.TestNodeKafkaAvro';
+  }
+}
+
+class TestNodeKafkaAvroTwo {
+  constructor(name, long) {
+    this.name = name;
+    this.long = long;
+    this.__schemaName = 'org.test.TestNodeKafkaAvroTwo';
   }
 }
 
 
-class Student  {
+class Student {
   constructor(firstName, middleInitial, lastName) {
     this.firstName = firstName;
     this.middleInitial = middleInitial;
     this.lastName = lastName;
     this.fullName = firstName + ' ' + middleInitial + ' ' + lastName;
+    this.__schemaName = 'org.test.Student';
   }
 }
 
@@ -150,10 +170,7 @@ describe('Consume', function () {
     it('should produce and consume a message using consume "on"', function (done) {
       let produceTime = 0;
 
-      const message = {
-        name: 'Thanasis',
-        long: 540,
-      };
+      const expected = new TestNodeKafkaAvro('Thanasis', 540);
 
       const key = 'test-key';
 
@@ -170,8 +187,8 @@ describe('Consume', function () {
           'name',
           'long',
         ]);
-        expect(dataValue.name).to.equal(message.name);
-        expect(dataValue.long).to.equal(message.long);
+        expect(dataValue.name).to.equal(expected.name);
+        expect(dataValue.long).to.equal(expected.long);
 
         expect(dataKey).to.equal(key);
 
@@ -180,13 +197,13 @@ describe('Consume', function () {
 
       setTimeout(() => {
         produceTime = Date.now();
-        this.producer.produce(testLib.topic, -1, message, key);
+        this.producer.produce(testLib.topic, -1, expected, key);
       }, 10000);
     });
 
     it('should produce and consume a multi type message using consume "on"', function (done) {
       const teacher = new Teacher('TeacherValue', `${getRandomInt(1000)}`, `${getRandomInt(1000)}`);
-      const teacherKey = new TeacherKey( `${getRandomInt(1000)}`);
+      const teacherKey = new TeacherKey(`${getRandomInt(1000)}`);
       const student = new Student('StudentValue', `${getRandomInt(1000)}`, '' + `${getRandomInt(1000)}`);
       const studentKey = new StudentKey(`${getRandomInt(1000)}`);
 
@@ -219,10 +236,7 @@ describe('Consume', function () {
     it('should produce and consume a message using consume "on" with timestamp when provided', function (done) {
       let produceTime = Date.parse('04 Dec 2015 00:12:00 GMT'); //use date in the past to guarantee we don't get Date.now()
 
-      const message = {
-        name: 'Thanasis',
-        long: 540,
-      };
+      const expected = new TestNodeKafkaAvro('Thanasis', 540);
 
       // //start consuming messages
       this.consumer.subscribe([testLib.topic]);
@@ -235,7 +249,7 @@ describe('Consume', function () {
 
       setTimeout(() => {
         produceTime = Date.now();
-        this.producer.produce(testLib.topic, -1, message, 'key', produceTime);
+        this.producer.produce(testLib.topic, -1, expected, 'key', produceTime);
       }, 10000);
     });
 
@@ -282,10 +296,8 @@ describe('Consume', function () {
     it('should produce and consume on two topics using a single consumer', function (done) {
       let produceTime = 0;
 
-      const message = {
-        name: 'Thanasis',
-        long: 540,
-      };
+      const expectedTopicOne = new TestNodeKafkaAvro('NewYork', 1080);
+      const expectedTopicTwo = new TestNodeKafkaAvroTwo('Thanasis', 540);
 
       const key = 'two-topics';
 
@@ -300,12 +312,6 @@ describe('Consume', function () {
       let receivedTwo = false;
 
       this.consumer.on('data', function (rawData) {
-        if (rawData.topic === testLib.topic) {
-          receivedOne = true;
-        } else {
-          receivedTwo = true;
-        }
-
         const dataValue = rawData.parsed;
         const dataKey = rawData.parsedKey;
         const diff = Date.now() - produceTime;
@@ -314,8 +320,17 @@ describe('Consume', function () {
           'name',
           'long',
         ]);
-        expect(dataValue.name).to.equal(message.name);
-        expect(dataValue.long).to.equal(message.long);
+
+        if (rawData.topic === testLib.topic) {
+          receivedOne = true;
+          expect(dataValue.name).to.equal(expectedTopicOne.name);
+          expect(dataValue.long).to.equal(expectedTopicOne.long);
+        } else {
+          receivedTwo = true;
+          expect(dataValue.name).to.equal(expectedTopicTwo.name);
+          expect(dataValue.long).to.equal(expectedTopicTwo.long);
+        }
+
         expect(dataKey).to.equal(key);
 
         if (receivedOne && receivedTwo) {
@@ -325,8 +340,8 @@ describe('Consume', function () {
 
       setTimeout(() => {
         produceTime = Date.now();
-        this.producer.produce(testLib.topicTwo, -1, message, key);
-        this.producer.produce(testLib.topic, -1, message, key);
+        this.producer.produce(testLib.topic, -1, expectedTopicOne, key);
+        this.producer.produce(testLib.topicTwo, -1, expectedTopicTwo, key);
       }, 10000);
     });
   })
@@ -336,10 +351,7 @@ describe('Consume', function () {
     it('should produce and consume a message using streams on two topics', function (done) {
       let produceTime = 0;
 
-      const message = {
-        name: 'Thanasis',
-        long: 540,
-      };
+      const expected = new TestNodeKafkaAvro('Chicago', 2160);
 
       const key = 'key-stream';
 
@@ -359,8 +371,8 @@ describe('Consume', function () {
               'long',
             ]);
 
-            expect(dataValue.name).to.equal(message.name);
-            expect(dataValue.long).to.equal(message.long);
+            expect(dataValue.name).to.equal(expected.name);
+            expect(dataValue.long).to.equal(expected.long);
             expect(dataKey).to.equal(key);
 
             if (!isDone) {
@@ -373,8 +385,8 @@ describe('Consume', function () {
 
       setTimeout(() => {
         produceTime = Date.now();
-        this.producer.produce(testLib.topicTwo, -1, message, key);
-        this.producer.produce(testLib.topic, -1, message, key);
+        this.producer.produce(testLib.topicTwo, -1, expected, key);
+        this.producer.produce(testLib.topic, -1, expected, key);
       }, 10000);
     });
 
@@ -383,10 +395,7 @@ describe('Consume', function () {
 
       const topicName = 'testKafkaAvro' + crypto.randomBytes(20).toString('hex');
 
-      const message = {
-        name: 'Thanasis',
-        long: 540,
-      };
+      const expected = new TestNodeKafkaAvro('Boise', 4320);
 
       const key = 'not-sr-key';
 
@@ -404,8 +413,8 @@ describe('Consume', function () {
               'long',
             ]);
 
-            expect(dataValue.name).to.equal(message.name);
-            expect(dataValue.long).to.equal(message.long);
+            expect(dataValue.name).to.equal(expected.name);
+            expect(dataValue.long).to.equal(expected.long);
 
             expect(dataKey).to.equal(key);
 
@@ -416,7 +425,7 @@ describe('Consume', function () {
 
       setTimeout(() => {
         produceTime = Date.now();
-        this.producer.produce(topicName, -1, message, key);
+        this.producer.produce(topicName, -1, expected, key);
       }, 10000);
     });
   });

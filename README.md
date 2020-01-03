@@ -287,7 +287,7 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 You can use `docker-compose up` to up all the stack before you call your integration tests with `npm test`. How the integration tests are outside the containers, you will need set you `hosts` file to :
 
 ```
-127.0.0.1 kafka
+127.0.0.1 kafka schema-registry
 ```
 
 

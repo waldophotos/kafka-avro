@@ -300,6 +300,8 @@ You can use `docker-compose up` to up all the stack before you call your integra
     * `grunt release:major` for major number jump.
 
 ## Release History
+- **3.0.1**, *03 Jan 2020*
+    - Fix a bug to custom strategies `keySubjectStrategy` and `valueSubjectStrategy` - they were not working as expected. The default behavior was not impacted.
 - **3.0.0**, *19 Sep 2019* 
     - Adds support for `RecordNameStrategy`(io.confluent.kafka.serializers.subject.RecordNameStrategy) and `TopicRecordNameStrategy`(io.confluent.kafka.serializers.subject.TopicRecordNameStrategy)
 schema subject name strategy. The purpose of the new strategies is to allow to put several event types in the same kafka topic (https://www.confluent.io/blog/put-several-event-types-kafka-topic) (by [pleszczy](github.com/pleszczy))

@@ -121,7 +121,8 @@ class CreatePromotionAuditLogMessage {
 let myObj = new  CreatePromotionAuditLogMessage()
 ```
 This will match to avro schema subject  `${topicName}-CreatePromotionAuditLogMessage` or `CreatePromotionAuditLogMessage`
-
+* NOTE: If you provide schema id by populating property `_id` you can bypass this mechanism altogether. This is useful if you want to use a specific version of schema. Otherwise the producer will always pick the latest version.
+e.g. Im registering schema in my application so I know the id of the schema and I dont want to produce schema with the latest version or upgrade to newer version in time.  
 ### Consumer
 
 > NOTICE: You need to initialize kafka-avro before you can produce or consume messages.
@@ -328,6 +329,8 @@ kafka docker run --rm -p 8000:8000 \
     * `grunt release:major` for major number jump.
 
 ## Release History
+- **3.2.0**, *7 Jan 2019* 
+    - You can now specify `__id` of the schema when producing. This allows overriding the schema version, otherwise kafka producer will always use the latest version of the schema
 - **3.1.0**, *19 Dec 2019* 
     - Adds support avro namespaces
     - Fixing shouldFailWhenSchemaIsMissing property

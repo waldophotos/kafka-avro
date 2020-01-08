@@ -60,6 +60,7 @@ When instantiating kafka-avro you may pass the following options:
 
 * `kafkaBroker` **String REQUIRED** The url or comma delimited strings pointing to your kafka brokers.
 * `schemaRegistry` **String REQUIRED** The url to the Schema Registry.
+* `schemaRegistryAuth` **Object** Basic auth object to connect to confluent cloud registry `{username: API_KEY, password: API_SECRET}`
 * `topics` **Array of Strings** You may optionally define specific topics to be fetched by kafka-avro vs fetching schemas for all the topics which is the default behavior.
 * `fetchAllVersions` **Boolean** Set to true to fetch all versions for each topic, use it when updating of schemas is often in your environment.
 * `fetchRefreshRate` **Number** The pooling time (in seconds) to the schemas be fetched and updated in background. This is useful to keep with schemas changes in production. The default value is `0` seconds (disabled).

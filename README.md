@@ -329,6 +329,8 @@ kafka docker run --rm -p 8000:8000 \
     * `grunt release:major` for major number jump.
 
 ## Release History
+- **3.2.2**, *7 Jan 2019* 
+    - Fixing a bug introduced in 3.2.0. Schema id was not correctly set by the producer and was always 0
 - **3.2.1**, *7 Jan 2019* 
     - Deep coping avsc parse options when registering schema. Avsc will add registry to those options and if we try to parse schema with the same name it will fail if e.g. with fetch all versions enabled, trying to avsc.parse an evolved version of the same schema will throw an exception that there is a duplicate schema in the registry.
 - **3.2.0**, *7 Jan 2019* 

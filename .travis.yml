@@ -11,6 +11,7 @@ cache:
 addons:
   hosts:
     - kafka
+    - schema-registry
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get -y install libsasl2-dev libssl-dev

@@ -68,7 +68,7 @@ When instantiating kafka-avro you may pass the following options:
 * `httpsAgent` **Object** initialized [https Agent class](https://nodejs.org/api/https.html#https_class_https_agent)
 * `shouldFailWhenSchemaIsMissing` **Boolean** Set to true if producing a message for which no AVRO schema can be found should throw an error
 * `keySubjectStrategy` **String** A SubjectNameStrategy for key. It is used by the Avro serializer to determine the subject name under which the event record schemas should be registered in the schema registry. The default is TopicNameStrategy. Allowed values are [TopicRecordNameStrategy, TopicNameStrategy, RecordNameStrategy]
-* `valueSubjectStrategy` **String** **String** A SubjectNameStrategy for value. It is used by the Avro serializer to determine the subject name under which the event record schemas should be registered in the schema registry. The default is TopicNameStrategy. Allowed values are [TopicRecordNameStrategy, TopicNameStrategy, RecordNameStrategy]
+* `valueSubjectStrategy` **String** A SubjectNameStrategy for value. It is used by the Avro serializer to determine the subject name under which the event record schemas should be registered in the schema registry. The default is TopicNameStrategy. Allowed values are [TopicRecordNameStrategy, TopicNameStrategy, RecordNameStrategy]
 
 ### Producer
 
@@ -288,7 +288,7 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 You can use `docker-compose up` to up all the stack before you call your integration tests with `npm test`. How the integration tests are outside the containers, you will need set you `hosts` file to :
 
 ```
-127.0.0.1 kafka
+127.0.0.1 kafka schema-registry
 ```
 
 
@@ -301,8 +301,11 @@ You can use `docker-compose up` to up all the stack before you call your integra
     * `grunt release:major` for major number jump.
 
 ## Release History
-- **3.0.2**, *09 Jan 2020*
+- **3.0.2**, *14 Jan 2020*
     - Adds support for basic authentication to schema registry, using Axios auth Request Config parameter, feature by [Bookaway](github.com/Bookaway).
+- **3.0.1**, *13 Jan 2020*
+    - Fix a bug to custom strategies `keySubjectStrategy` and `valueSubjectStrategy` - they were not working as expected. The default behavior was not impacted.
+    - Little error logs improvements
 - **3.0.0**, *19 Sep 2019* 
     - Adds support for `RecordNameStrategy`(io.confluent.kafka.serializers.subject.RecordNameStrategy) and `TopicRecordNameStrategy`(io.confluent.kafka.serializers.subject.TopicRecordNameStrategy)
 schema subject name strategy. The purpose of the new strategies is to allow to put several event types in the same kafka topic (https://www.confluent.io/blog/put-several-event-types-kafka-topic) (by [pleszczy](github.com/pleszczy))

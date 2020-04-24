@@ -2,7 +2,7 @@
 
 > Node.js bindings for librdkafka with Avro schema serialization.
 
-[![CircleCI](https://circleci.com/gh/pleszczy/kafka-avro/tree/master.svg)](https://circleci.com/gh/pleszczy/kafka-avro/tree/master)
+[![CircleCI](https://circleci.com/gh/waldophotos/kafka-avro/tree/master.svg?style=svg)](https://circleci.com/gh/waldophotos/kafka-avro/tree/master)
 
 The kafka-avro library is a wrapper that combines the [node-rdkafka][node-rdkafka] and [avsc][avsc] libraries to allow for Production and Consumption of messages on kafka validated and serialized by Avro.
 
@@ -60,6 +60,7 @@ When instantiating kafka-avro you may pass the following options:
 
 * `kafkaBroker` **String REQUIRED** The url or comma delimited strings pointing to your kafka brokers.
 * `schemaRegistry` **String REQUIRED** The url to the Schema Registry.
+* `schemaRegistryAuth` **Object** Basic auth object to connect to confluent cloud registry `{username: API_KEY, password: API_SECRET}`. Same as Axios basic auth [Request Config](https://github.com/axios/axios#request-config) parameter.
 * `topics` **Array of Strings** You may optionally define specific topics to be fetched by kafka-avro vs fetching schemas for all the topics which is the default behavior.
 * `fetchAllVersions` **Boolean** Set to true to fetch all versions for each topic, use it when updating of schemas is often in your environment.
 * `fetchRefreshRate` **Number** The pooling time (in seconds) to the schemas be fetched and updated in background. This is useful to keep with schemas changes in production. The default value is `0` seconds (disabled).
@@ -67,7 +68,7 @@ When instantiating kafka-avro you may pass the following options:
 * `httpsAgent` **Object** initialized [https Agent class](https://nodejs.org/api/https.html#https_class_https_agent)
 * `shouldFailWhenSchemaIsMissing` **Boolean** Set to true if producing a message for which no AVRO schema can be found should throw an error
 * `keySubjectStrategy` **String** A SubjectNameStrategy for key. It is used by the Avro serializer to determine the subject name under which the event record schemas should be registered in the schema registry. The default is TopicNameStrategy. Allowed values are [TopicRecordNameStrategy, TopicNameStrategy, RecordNameStrategy]
-* `valueSubjectStrategy` **String** **String** A SubjectNameStrategy for value. It is used by the Avro serializer to determine the subject name under which the event record schemas should be registered in the schema registry. The default is TopicNameStrategy. Allowed values are [TopicRecordNameStrategy, TopicNameStrategy, RecordNameStrategy]
+* `valueSubjectStrategy` **String** A SubjectNameStrategy for value. It is used by the Avro serializer to determine the subject name under which the event record schemas should be registered in the schema registry. The default is TopicNameStrategy. Allowed values are [TopicRecordNameStrategy, TopicNameStrategy, RecordNameStrategy]
 
 ### Producer
 
@@ -309,7 +310,7 @@ Deserialize the provided message, expects a message that includes Magic Byte and
 You can use `docker-compose up` to up all the stack before you call your integration tests with `npm test`. How the integration tests are outside the containers, you will need set you `hosts` file to :
 
 ```
-127.0.0.1 kafka
+127.0.0.1 kafka schema-registry
 ```
 
 
@@ -341,6 +342,11 @@ kafka docker run --rm -p 8000:8000 \
     - Reimplementing  `RecordNameStrategy`(io.confluent.kafka.serializers.subject.RecordNameStrategy) and `TopicRecordNameStrategy`(io.confluent.kafka.serializers.subject.TopicRecordNameStrategy) to use
     `__schemaName` and using `constructor().name()` as a fallback. Using `__schemaName` will allow defining namespaces and is more reliable then constructor name which sometimes can be `lost` during transpiling or minimizing.
     To use this future you need to define `__schemaName` property on your objects
+- **3.0.2**, *14 Jan 2020*
+    - Adds support for basic authentication to schema registry, using Axios auth Request Config parameter, feature by [Bookaway](github.com/Bookaway).
+- **3.0.1**, *13 Jan 2020*
+    - Fix a bug to custom strategies `keySubjectStrategy` and `valueSubjectStrategy` - they were not working as expected. The default behavior was not impacted.
+    - Little error logs improvements
 - **3.0.0**, *19 Sep 2019* 
     - Adds support for `RecordNameStrategy`(io.confluent.kafka.serializers.subject.RecordNameStrategy) and `TopicRecordNameStrategy`(io.confluent.kafka.serializers.subject.TopicRecordNameStrategy)
 schema subject name strategy. The purpose of the new strategies is to allow to put several event types in the same kafka topic (https://www.confluent.io/blog/put-several-event-types-kafka-topic) (by [pleszczy](github.com/pleszczy))

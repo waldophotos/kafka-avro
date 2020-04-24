@@ -314,7 +314,7 @@ You can use `docker-compose up` to up all the stack before you call your integra
 ```
 
 
-You can use a simple tool called schema-registry-ui to troubleshoot tests failing due to schema issues.
+You can use schema-registry-ui to troubleshoot tests failing due to schema issues.
 ```
 kafka docker run --rm -p 8000:8000 \
            -e "SCHEMAREGISTRY_URL=http://schema-registry:8081" \
@@ -330,7 +330,7 @@ kafka docker run --rm -p 8000:8000 \
     * `grunt release:major` for major number jump.
 
 ## Release History
-- **3.1.0**, *19 Dec 2019* 
+- **3.1.0**, *24 Apr 2020* 
     - Fixing shouldFailWhenSchemaIsMissing property
     - Reimplementing  `RecordNameStrategy`(io.confluent.kafka.serializers.subject.RecordNameStrategy) and `TopicRecordNameStrategy`(io.confluent.kafka.serializers.subject.TopicRecordNameStrategy) to use
       `__schemaName` and using `constructor().name()` as a fallback. Using `__schemaName` will allow defining namespaces and is more reliable than constructor name which sometimes can be `lost` during transpiling or minimizing.

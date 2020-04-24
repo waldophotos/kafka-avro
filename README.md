@@ -104,7 +104,7 @@ What kafka-avro basically does is wrap around node-rdkafka and intercept the pro
 
 #### How to produce events using TopicRecordNameStrategy or RecordNameStrategy
 To produce events using TopicRecordNameStrategy or RecordNameStrategy you need to either define a property `__schemaName` on the object being serialized or name the object like your avro schema and use a new constructor. 
-It is is recommended to use `__schemaName` to avoid issues with transpiling and minimization where the constructor name could be `lost`. This will also alway defining a namespace e.g. `org.mypackage.audit.Event`
+It is recommended to use `__schemaName` to avoid issues with transpiling and minimization of constructor.name. This will allow to define a namespace e.g. `org.mypackage.audit.Event` instead of just `Event`
 * Define a property `__schemaName` e.g.
 ```ts
    class CreatePromotionAuditLogMessage {
@@ -122,8 +122,8 @@ class CreatePromotionAuditLogMessage {
 let myObj = new  CreatePromotionAuditLogMessage()
 ```
 This will match to avro schema subject  `${topicName}-CreatePromotionAuditLogMessage` or `CreatePromotionAuditLogMessage`
-* NOTE: If you provide schema id by populating property `_id` you can bypass this mechanism altogether. This is useful if you want to use a specific version of schema. Otherwise the producer will always pick the latest version.
-e.g. Im registering schema in my application so I know the id of the schema and I dont want to produce schema with the latest version or upgrade to newer version in time.  
+* NOTE: If you provide schema id by populating property `_id` you can bypass this mechanism altogether. This is useful if you want to use a specific version of schema. Otherwise, the producer will always pick the latest version.
+e.g. I'm registering schema in my application, so I know the id of the schema, and I don't want to produce schema with the latest version or upgrade to newer version in time.  
 ### Consumer
 
 > NOTICE: You need to initialize kafka-avro before you can produce or consume messages.

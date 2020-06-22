@@ -69,6 +69,7 @@ When instantiating kafka-avro you may pass the following options:
 * `shouldFailWhenSchemaIsMissing` **Boolean** Set to true if producing a message for which no AVRO schema can be found should throw an error
 * `keySubjectStrategy` **String** A SubjectNameStrategy for key. It is used by the Avro serializer to determine the subject name under which the event record schemas should be registered in the schema registry. The default is TopicNameStrategy. Allowed values are [TopicRecordNameStrategy, TopicNameStrategy, RecordNameStrategy]
 * `valueSubjectStrategy` **String** A SubjectNameStrategy for value. It is used by the Avro serializer to determine the subject name under which the event record schemas should be registered in the schema registry. The default is TopicNameStrategy. Allowed values are [TopicRecordNameStrategy, TopicNameStrategy, RecordNameStrategy]
+* `isStringRegistryKey` **Boolean** Set to true to not send requests for Avro schemas for keys. Set to `false` by default
 
 ### Producer
 
@@ -337,6 +338,8 @@ kafka docker run --rm -p 8000:8000 \
       To use this future you need to define `__schemaName` property on your objects.
     - You can now also specify `__id` of the schema directly. This allows overriding the schema version, otherwise kafka producer will always use the latest version of the schema.
     - Deep coping avsc parse options when registering schema. Avsc will add a registry to those options and if we try to parse a schema with the same name again it will fail e.g. with fetch all versions enabled, trying to avsc.parse an evolved version of the same schema will throw an exception that there is a duplicate schema in the registry.
+- **3.0.3**, *15 May 2020*
+    - Adds support for string type schema registry keys parameter, feature by [OleksandrKrupko](github.com/OleksandrKrupko).
 - **3.0.2**, *14 Jan 2020*
     - Adds support for basic authentication to schema registry, using Axios auth Request Config parameter, feature by [Bookaway](github.com/Bookaway).
 - **3.0.1**, *13 Jan 2020*

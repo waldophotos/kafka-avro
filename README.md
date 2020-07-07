@@ -116,7 +116,9 @@ When consuming topics using the `data` event you will need to perform a `connect
 ```js
 kafkaAvro.getConsumer({
   'group.id': 'librd-test',
-  'socket.keepalive.enable': true,
+  'socket.keepalive.enable': true
+},
+{
   'enable.auto.commit': true,
 })
   // the "getConsumer()" method will return a bluebird promise.

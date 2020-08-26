@@ -228,6 +228,53 @@ kafkaAvro.init()
 
 You can read more about this here : https://www.confluent.io/blog/put-several-event-types-kafka-topic/
 
+### Using async/await
+
+Using async/await
+
+```js
+(async function() {
+    try {
+        await kafkaAvro.init();
+        const producer = await kafkaAvro.getProducer({
+            // options //
+        });
+        // if partition is set to -1, librdkafka will use the default partitioner
+        producer.produce('test', -1, { name: 'John' }, 'key');
+    } catch (err) {
+        // error handling
+    }
+})();
+```
+
+```js
+(async function() {
+    try {
+        await kafkaAvro.init();
+        const consumer = await kafkaAvro.getConsumer({
+            //options
+        });
+
+        consumer.on('ready', function(arg) {
+            consumer.subscribe(['topic']);
+            consumer.consume();
+        });
+
+        consumer.on('data', function(rawData) {
+            console.log('data:', rawData.parsed);
+        });
+
+        consumer.on('disconnected', function(arg) {
+            console.log('consumer disconnected. ' + JSON.stringify(arg));
+        });
+
+        consumer.connect();
+    } catch (e) {
+        // error handling
+    }
+})();
+```
+
 ### Logging
 
 The Kafka Avro library logs messages using the [Bunyan logger](https://github.com/trentm/node-bunyan/). To enable logging you will have to define at least one of the needed ENV variables:
@@ -292,6 +339,9 @@ You can use `docker-compose up` to up all the stack before you call your integra
 127.0.0.1 kafka schema-registry
 ```
 
+## Troubleshooting OSX Catalina
+You can find some instructions [here](github.com/nodejs/node-gyp/blob/master/macOS_Catalina.md)
+
 
 ## Releasing
 
@@ -302,6 +352,9 @@ You can use `docker-compose up` to up all the stack before you call your integra
     * `grunt release:major` for major number jump.
 
 ## Release History
+- **3.1.0**, *27 Aug 2020*
+    - Updating node-rdkafka to 2.9.0 and axios to 0.12.0
+    - Update README.md
 - **3.0.3**, *15 May 2020*
     - Adds support for string type schema registry keys parameter, feature by [OleksandrKrupko](github.com/OleksandrKrupko).
 - **3.0.2**, *14 Jan 2020*

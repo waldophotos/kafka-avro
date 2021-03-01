@@ -352,8 +352,10 @@ You can find some instructions [here](github.com/nodejs/node-gyp/blob/master/mac
     * `grunt release:major` for major number jump.
 
 ## Release History
+- **3.1.1**, *01 Mar 2021*
+    - Updating axios to 0.21.1
 - **3.1.0**, *27 Aug 2020*
-    - Updating node-rdkafka to 2.9.0 and axios to 0.12.0
+    - Updating node-rdkafka to 2.9.0 and axios to 0.20.0
     - Update README.md
 - **3.0.3**, *15 May 2020*
     - Adds support for string type schema registry keys parameter, feature by [OleksandrKrupko](github.com/OleksandrKrupko).

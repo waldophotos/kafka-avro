@@ -222,7 +222,7 @@ describe('Consume', function () {
     it('should produce and consume a message using consume "on", on a non Schema Registry topic', function (done) {
       let produceTime = 0;
 
-      const topicName = 'testKafkaAvro' + crypto.randomBytes(20).toString('hex');
+      const topicName = testLib.testNodeKafkaWithoutSR;
 
       const message = {
         name: 'Thanasis',
@@ -361,7 +361,7 @@ describe('Consume', function () {
     it('should produce and consume a message using streams on a not SR topic', function (done) {
       let produceTime = 0;
 
-      const topicName = 'testKafkaAvro' + crypto.randomBytes(20).toString('hex');
+      const topicName = testLib.testNodeKafkaWithoutSR;
 
       const message = {
         name: 'Thanasis',

@@ -39,6 +39,7 @@ testLib.topic = schemaFix.name;
 testLib.topicTwo = schemaTwoFix.name;
 testLib.topicTree = `${schemaTeacher.name}-${schemaStudent.name}`;
 testLib.topicThreeWithDuplicateSchema = schemaFix.name + '-duplicateSchema';
+testLib.testNodeKafkaWithoutSR = 'testNodeKafkaWithoutSR';
 
 let testBoot = false;
 
